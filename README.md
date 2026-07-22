@@ -2,7 +2,7 @@
 
 RupeeLens is a TypeScript dashboard for studying UPI transaction risk, security logs, and Indian Union Budget data in one place.
 
-[Open the live app](https://rupeelens.orewakaizoku1999.chatgpt.site)
+[Open the live app](https://deepusleepy.github.io/RupeeLens/)
 
 ## What it does
 
@@ -64,6 +64,7 @@ The local app runs at <http://localhost:3000>.
 npm run lint
 npx tsc --noEmit
 npm test
+npm run build:pages
 ```
 
 `npm test` creates a production build and runs the route and API tests.
