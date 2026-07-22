@@ -6,7 +6,7 @@ const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RupeeLens — Payment risk and public finance",
+  title: "RupeeLens | Payment risk and public finance",
   description: "Analyse UPI transaction scenarios, security logs, masked payment events, and India’s Union Budget.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {

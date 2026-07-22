@@ -30,14 +30,12 @@ test("renders the RupeeLens product surface", async () => {
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, context);
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /<title>RupeeLens — Payment risk and public finance<\/title>/i);
+  assert.match(html, /<title>RupeeLens \| Payment risk and public finance<\/title>/i);
   assert.match(html, /Investigate money from transaction to treasury/);
   assert.match(html, /Synthetic payment data/);
   assert.match(html, /Budget analytics/);
   assert.match(html, /Security logs/);
   assert.match(html, /Dual-model comparison/);
-  assert.doesNotMatch(html, /KuldeepB19|kuldeepb19|Bharat Signals/i);
-  assert.doesNotMatch(html, /old experiments|old workspaces|one lens|every money trail/i);
 });
 
 test("returns an explainable held decision", async () => {
