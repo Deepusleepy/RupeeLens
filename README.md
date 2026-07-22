@@ -1,14 +1,14 @@
 # RupeeLens
 
-**Follow the money. See the reason.**
+Payment risk and public finance, examined clearly.
 
-RupeeLens is a full-stack analytical workspace that unifies three earlier experiments into one coherent product:
+RupeeLens is a full-stack analytical workspace for:
 
 - explainable UPI transaction-risk scenarios;
 - privacy-safe payment-event investigation; and
 - sourced India Union Budget context.
 
-The interface is designed around a simple standard: visible inputs, visible reasons, and visible limits.
+It keeps payment data synthetic, shows how every risk score is calculated, and links budget figures to the official source.
 
 ## Product boundaries
 
