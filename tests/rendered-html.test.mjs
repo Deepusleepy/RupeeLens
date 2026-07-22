@@ -14,7 +14,8 @@ test("renders the RupeeLens product surface", async () => {
   assert.match(html, /<title>RupeeLens — Payment risk and public finance<\/title>/i);
   assert.match(html, /Look closer at how money moves/);
   assert.match(html, /Synthetic payment data/);
-  assert.match(html, /Union Budget 2026–27/);
+  assert.match(html, /2026–27 Union Budget/);
+  assert.match(html, /Security logs/);
   assert.doesNotMatch(html, /KuldeepB19|kuldeepb19|Bharat Signals/i);
   assert.doesNotMatch(html, /old experiments|old workspaces|one lens|every money trail/i);
 });
@@ -40,6 +41,17 @@ test("rejects invalid risk inputs", async () => {
     body: JSON.stringify({ amount: -1, hour: 45, deviceAgeDays: 0, failedAttempts: 0, newBeneficiary: false, vpaMismatch: false, locationVelocityKmH: 0 }),
   }), env, context);
   assert.equal(response.status, 400);
+});
+
+test("adds an untrusted-location contribution when location context is supplied", async () => {
+  const response = await worker.fetch(new Request("http://localhost/api/risk", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ amount: 900, hour: 13, deviceAgeDays: 100, failedAttempts: 0, newBeneficiary: false, vpaMismatch: false, locationVelocityKmH: 0, location: "Foreign" }),
+  }), env, context);
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.ok(result.contributions.some((item) => item.signal === "Untrusted location"));
 });
 
 test("filters the synthetic event trail without exposing raw identifiers", async () => {

@@ -23,8 +23,12 @@ Official source: <https://www.indiabudget.gov.in/doc/budget_at_glance/bag1.pdf>
 ## Features
 
 - interactive server-side risk evaluator with contribution traces;
+- reusable risk presets, session review history, and client-side CSV batch analysis;
 - searchable and filterable event API;
-- masked synthetic payment-event trail;
+- masked synthetic payment-event trail with summary metrics and CSV export;
+- five-family security log explorer with anomaly triage and filtered export;
+- historical ministry allocation explorer covering FY2014–15 to FY2024–25;
+- indexed, year-on-year, and directional forecast views;
 - one-rupee receipt and expenditure maps;
 - 2026–27 fiscal aggregates with primary-source links;
 - responsive editorial interface with reduced-motion support;
