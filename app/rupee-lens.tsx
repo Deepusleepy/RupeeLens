@@ -2,15 +2,12 @@
 
 import {
   ArrowRight,
-  BookOpen,
   Check,
   ChevronDown,
   CircleAlert,
-  CircleCheck,
   Code2,
   Database,
   ExternalLink,
-  Eye,
   FileSearch,
   Fingerprint,
   Gauge,
@@ -20,7 +17,6 @@ import {
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   X,
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
@@ -35,12 +31,12 @@ type RiskResult = {
   caveat: string;
 };
 
-const views: { id: View; label: string; short: string; icon: typeof Eye }[] = [
-  { id: "overview", label: "Overview", short: "01", icon: Eye },
-  { id: "risk", label: "Risk studio", short: "02", icon: ShieldCheck },
-  { id: "events", label: "Event trail", short: "03", icon: FileSearch },
-  { id: "budget", label: "Public money", short: "04", icon: Landmark },
-  { id: "method", label: "Method", short: "05", icon: BookOpen },
+const views: { id: View; label: string }[] = [
+  { id: "overview", label: "Overview" },
+  { id: "risk", label: "Risk analysis" },
+  { id: "events", label: "Payment events" },
+  { id: "budget", label: "Union Budget" },
+  { id: "method", label: "Methodology" },
 ];
 
 function formatInr(amount: number) {
@@ -48,7 +44,7 @@ function formatInr(amount: number) {
 }
 
 function Wordmark() {
-  return <div className="wordmark"><span className="lens-mark"><i>₹</i></span><div><strong>RupeeLens</strong><small>FINANCIAL SIGNALS, IN FOCUS</small></div></div>;
+  return <div className="wordmark"><span className="lens-mark"><i>₹</i></span><div><strong>RupeeLens</strong><small>Payment risk and public finance</small></div></div>;
 }
 
 function Shell({ active, setActive, children }: { active: View; setActive: (view: View) => void; children: React.ReactNode }) {
@@ -58,19 +54,19 @@ function Shell({ active, setActive, children }: { active: View; setActive: (view
       <header className="masthead">
         <Wordmark />
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {views.map((view) => <button key={view.id} className={active === view.id ? "active" : ""} onClick={() => setActive(view.id)}><span>{view.short}</span>{view.label}</button>)}
+          {views.map((view) => <button key={view.id} className={active === view.id ? "active" : ""} onClick={() => setActive(view.id)}>{view.label}</button>)}
         </nav>
-        <div className="mast-actions"><span className="privacy-stamp"><ShieldCheck size={14} /> No real payment data</span><button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={20} /></button></div>
+        <div className="mast-actions"><span className="privacy-stamp"><ShieldCheck size={14} /> Synthetic payment data</span><button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={20} /></button></div>
       </header>
-      {menuOpen && <div className="mobile-nav"><button className="close-menu" onClick={() => setMenuOpen(false)} aria-label="Close navigation"><X size={22} /></button><Wordmark /><nav>{views.map((view) => <button key={view.id} onClick={() => { setActive(view.id); setMenuOpen(false); }}><span>{view.short}</span>{view.label}</button>)}</nav></div>}
+      {menuOpen && <div className="mobile-nav"><button className="close-menu" onClick={() => setMenuOpen(false)} aria-label="Close navigation"><X size={22} /></button><Wordmark /><nav>{views.map((view) => <button key={view.id} onClick={() => { setActive(view.id); setMenuOpen(false); }}>{view.label}</button>)}</nav></div>}
       <main>{children}</main>
-      <footer className="site-footer"><Wordmark /><p>Built as an explainable portfolio lab. Synthetic payment events; official budget aggregates.</p><a href="https://github.com/Deepusleepy" target="_blank" rel="noreferrer"><Code2 size={15} /> Deepusleepy <ExternalLink size={12} /></a></footer>
+      <footer className="site-footer"><Wordmark /><p>Synthetic payment events · Union Budget Estimates 2026–27</p><a href="https://github.com/Deepusleepy" target="_blank" rel="noreferrer"><Code2 size={15} /> Deepusleepy <ExternalLink size={12} /></a></footer>
     </div>
   );
 }
 
-function SectionHeader({ index, eyebrow, title, copy }: { index: string; eyebrow: string; title: string; copy: string }) {
-  return <header className="section-header"><div className="section-index">{index}</div><div><p>{eyebrow}</p><h1>{title}</h1><span>{copy}</span></div></header>;
+function SectionHeader({ title, copy }: { title: string; copy: string }) {
+  return <header className="section-header"><h1>{title}</h1><p>{copy}</p></header>;
 }
 
 function Overview({ navigate }: { navigate: (view: View) => void }) {
@@ -78,49 +74,46 @@ function Overview({ navigate }: { navigate: (view: View) => void }) {
     <>
       <section className="hero">
         <div className="hero-copy">
-          <p className="overline"><span /> ONE LENS. EVERY MONEY TRAIL.</p>
-          <h1>Follow the money.<br /><em>See the reason.</em></h1>
-          <p>RupeeLens joins explainable UPI risk signals, searchable payment events, and sourced Union Budget context in one rigorous analytical workspace.</p>
-          <div className="hero-actions"><button className="primary" onClick={() => navigate("risk")}>Open risk studio <ArrowRight size={17} /></button><button className="secondary" onClick={() => navigate("budget")}>Explore public money</button></div>
-          <div className="trust-row"><span><Check size={13} /> Explainable scoring</span><span><Check size={13} /> Masked identifiers</span><span><Check size={13} /> Official budget source</span></div>
+          <h1>Look closer at how money moves.</h1>
+          <p>Test a UPI transaction against a documented rule set, search a masked payment log, and examine the 2026–27 Union Budget from its primary source.</p>
+          <div className="hero-actions"><button className="primary" onClick={() => navigate("risk")}>Test a transaction <ArrowRight size={17} /></button><button className="secondary" onClick={() => navigate("budget")}>View the Union Budget</button></div>
+          <div className="trust-row"><span><Check size={13} /> Rules shown</span><span><Check size={13} /> Identifiers masked</span><span><Check size={13} /> Figures source-linked</span></div>
         </div>
-        <div className="hero-lens" aria-label="RupeeLens analytical lens illustration">
-          <div className="lens-grid" />
-          <div className="lens-orbit orbit-a"><i /></div><div className="lens-orbit orbit-b"><i /></div>
-          <div className="lens-core"><span>₹</span><small>IN FOCUS</small></div>
-          <div className="lens-callout callout-a"><b>86</b><span>RISK SIGNAL</span></div>
-          <div className="lens-callout callout-b"><b>₹53.47L CR</b><span>2026–27 OUTLAY</span></div>
-          <div className="lens-callout callout-c"><b>100%</b><span>REASONS VISIBLE</span></div>
+        <div className="hero-preview" aria-label="Example transaction analysis">
+          <div className="preview-head"><div><span>Example transaction</span><b>RL-91F2</b></div><span className="decision-pill held">Hold</span></div>
+          <div className="preview-amount"><strong>₹24,999</strong><span>P2P · Bengaluru · 14:42</span></div>
+          <div className="preview-score"><div><span>Risk score</span><strong>86 / 100</strong></div><i><b /></i></div>
+          <dl className="preview-details"><div><dt>New device</dt><dd>+24</dd></div><div><dt>Location velocity</dt><dd>+28</dd></div><div><dt>New beneficiary</dt><dd>+13</dd></div></dl>
+          <p>Synthetic example · No customer data</p>
         </div>
       </section>
 
-      <section className="brief-strip">
-        <div><span>LIVE WORKSPACE</span><strong>Three old experiments, rebuilt as one coherent product.</strong></div>
-        <p>Payment risk · Event investigation · Public finance</p>
+      <section className="data-status">
+        <div><span>Payment events</span><b>Synthetic, masked</b></div>
+        <div><span>Budget figures</span><b>BE 2026–27</b></div>
+        <div><span>Risk model</span><b>Seven documented rules</b></div>
       </section>
 
       <section className="overview-columns">
         <article className="feature-story risk-story">
-          <div className="story-number">A</div>
-          <p className="kicker">PAYMENT INTELLIGENCE</p>
-          <h2>A score that shows its work.</h2>
-          <p>Compose a payment scenario, send it through a validated server-side rules engine, and inspect every contribution behind the recommendation.</p>
+          <p className="feature-label">Payment risk</p>
+          <h2>Review a transaction</h2>
+          <p>Enter the transaction amount, time, device age, recent failures, beneficiary status, and location change. The result lists every rule that affected the score.</p>
           <div className="mini-score"><div><strong>74</strong><span>REVIEW</span></div><ul><li><i className="rust" /> New device <b>+24</b></li><li><i className="gold" /> Impossible travel <b>+28</b></li><li><i className="green" /> New beneficiary <b>+13</b></li></ul></div>
-          <button className="story-link" onClick={() => navigate("risk")}>Test a scenario <ArrowRight size={15} /></button>
+          <button className="story-link" onClick={() => navigate("risk")}>Open transaction form <ArrowRight size={15} /></button>
         </article>
         <article className="feature-story budget-story">
-          <div className="story-number">B</div>
-          <p className="kicker">PUBLIC MONEY</p>
-          <h2>The Union Budget, without prediction theatre.</h2>
-          <p>Read the 2026–27 Budget Estimates as reported—units, definitions, and primary source intact. No polynomial forecast pretending to know the future.</p>
+          <p className="feature-label">Public finance</p>
+          <h2>Read the 2026–27 Union Budget</h2>
+          <p>Compare Budget Estimates for receipts, expenditure, transfers, and the fiscal deficit. Every figure links back to the Ministry of Finance document.</p>
           <div className="budget-spotlight"><strong>₹53.47</strong><span>LAKH CRORE<br />TOTAL EXPENDITURE</span><i>BE 2026–27</i></div>
-          <button className="story-link" onClick={() => navigate("budget")}>Trace every rupee <ArrowRight size={15} /></button>
+          <button className="story-link" onClick={() => navigate("budget")}>Open budget data <ArrowRight size={15} /></button>
         </article>
       </section>
 
-      <section className="principles">
-        <div><p className="kicker">THE RULE OF THE LENS</p><h2>Clarity before confidence.</h2></div>
-        <div className="principle-grid"><article><span>01</span><h3>Visible inputs</h3><p>Every scenario field, event filter, and budget unit stays inspectable.</p></article><article><span>02</span><h3>Visible reasons</h3><p>A recommendation is accompanied by the exact signals that produced it.</p></article><article><span>03</span><h3>Visible limits</h3><p>Synthetic data, source dates, and non-production caveats are never buried.</p></article></div>
+      <section className="use-cases">
+        <h2>What you can do</h2>
+        <ul><li><Check size={15} /><span>Test a transaction against seven documented scoring rules.</span></li><li><Check size={15} /><span>Filter eight masked sample events by decision or signal.</span></li><li><Check size={15} /><span>Compare official Budget Estimates as paise per rupee.</span></li></ul>
       </section>
     </>
   );
@@ -150,10 +143,10 @@ function RiskStudio() {
   }
 
   return <section className="view-page">
-    <SectionHeader index="02" eyebrow="EXPLAINABLE PAYMENT RISK" title="Risk studio" copy="Change the facts. Inspect the recommendation. Challenge every contribution." />
+    <SectionHeader title="Risk analysis" copy="Enter a transaction scenario. RupeeLens applies the documented rules and returns the score, suggested action, and full breakdown." />
     <div className="studio-grid">
       <form className="scenario-panel" onSubmit={score}>
-        <div className="panel-title"><div><p>SCENARIO COMPOSER</p><h2>Transaction facts</h2></div><SlidersHorizontal size={21} /></div>
+        <div className="panel-title"><div><p>Input</p><h2>Transaction details</h2></div><SlidersHorizontal size={21} /></div>
         <div className="input-grid">
           <label><span>Amount</span><div className="input-prefix">₹<input type="number" min="1" max="1000000" value={amount} onChange={(e) => setAmount(e.target.value)} /></div></label>
           <label><span>Hour of day</span><input type="number" min="0" max="23" value={hour} onChange={(e) => setHour(e.target.value)} /></label>
@@ -162,20 +155,20 @@ function RiskStudio() {
           <label className="wide"><span>Travel velocity since previous event</span><div className="input-suffix"><input type="number" min="0" max="2000" value={velocity} onChange={(e) => setVelocity(e.target.value)} /><i>km/h</i></div></label>
         </div>
         <div className="switches"><label><div><b>New beneficiary</b><small>No established payment relationship</small></div><input type="checkbox" checked={newBeneficiary} onChange={(e) => setNewBeneficiary(e.target.checked)} /></label><label><div><b>VPA identity mismatch</b><small>Payment identifiers disagree</small></div><input type="checkbox" checked={mismatch} onChange={(e) => setMismatch(e.target.checked)} /></label></div>
-        <button className="evaluate" disabled={loading}>{loading ? "Tracing signals…" : "Trace this payment"}<Sparkles size={17} /></button>
+        <button className="evaluate" disabled={loading}>{loading ? "Evaluating…" : "Evaluate transaction"}<ArrowRight size={17} /></button>
         {error && <p className="form-error"><CircleAlert size={14} /> {error}</p>}
       </form>
 
       <article className="result-panel">
-        <div className="panel-title"><div><p>DECISION TRACE</p><h2>{result ? "Evaluation complete" : "Awaiting scenario"}</h2></div><Fingerprint size={21} /></div>
+        <div className="panel-title"><div><p>Result</p><h2>{result ? "Transaction score" : "No result yet"}</h2></div><Fingerprint size={21} /></div>
         {result ? <>
           <div className={`score-lens ${result.decision}`}><div className="score-ring"><strong>{result.score}</strong><span>/ 100</span></div><div className="decision-label"><small>RECOMMENDED ACTION</small><b>{result.decision}</b><span>{result.confidence}</span></div></div>
-          <div className="contribution-list"><p>CONTRIBUTION TRACE</p>{result.contributions.map((item) => <div key={item.signal}><span className="contribution-icon"><Radar size={15} /></span><div><b>{item.signal}</b><small>{item.detail}</small></div><strong>+{item.points}</strong></div>)}</div>
+          <div className="contribution-list"><p>Score breakdown</p>{result.contributions.map((item) => <div key={item.signal}><span className="contribution-icon"><Radar size={15} /></span><div><b>{item.signal}</b><small>{item.detail}</small></div><strong>+{item.points}</strong></div>)}</div>
           <div className="decision-caveat"><CircleAlert size={16} /><span>{result.caveat}</span></div>
-        </> : <div className="result-empty"><div className="empty-lens"><Radar size={42} /></div><h3>No opaque verdicts.</h3><p>Your result will show a score, recommended action, and every rule contribution—not just a red or green light.</p></div>}
+        </> : <div className="result-empty"><ShieldCheck size={38} /><h3>Enter a scenario to begin</h3><p>The result will include a score, a suggested action, and the rules that contributed to it.</p></div>}
       </article>
     </div>
-    <div className="risk-footer"><div><ShieldCheck size={19} /><p><b>Safety boundary</b><span>This demonstration routes attention; it does not determine whether a person committed fraud.</span></p></div><div><Database size={19} /><p><b>Data boundary</b><span>The scenario stays in this request and is not stored by the application.</span></p></div></div>
+    <div className="risk-footer"><div><ShieldCheck size={19} /><p><b>Scope</b><span>This score prioritises review. It is not a fraud determination.</span></p></div><div><Database size={19} /><p><b>Storage</b><span>The scenario is evaluated for this request and is not saved.</span></p></div></div>
   </section>;
 }
 
@@ -199,11 +192,11 @@ function EventTrail() {
   }, [query, status]);
 
   return <section className="view-page">
-    <SectionHeader index="03" eyebrow="SYNTHETIC EVENT INVESTIGATION" title="Event trail" copy="Search a privacy-safe event stream and follow the signals behind each review decision." />
+    <SectionHeader title="Payment events" copy="Search the masked sample data by event ID, VPA, city, or signal, then filter it by decision." />
     <div className="event-toolbar"><label className="event-search"><Search size={17} /><input aria-label="Search payment events" placeholder="Search event ID, masked VPA, city, or signal" value={query} onChange={(e) => setQuery(e.target.value)} /></label><label className="status-filter"><select aria-label="Filter by status" value={status} onChange={(e) => setStatus(e.target.value)}><option value="all">All decisions</option><option value="held">Held</option><option value="review">Review</option><option value="allowed">Allowed</option></select><ChevronDown size={15} /></label><span className="event-count">{loading ? "…" : events.length} EVENTS</span></div>
     <div className="event-layout">
       <div className="event-table-wrap"><table className="event-table"><thead><tr><th>Event</th><th>Time</th><th>Masked VPA</th><th>Amount</th><th>Signals</th><th>Risk</th><th>Decision</th></tr></thead><tbody>{events.map((event) => <tr key={event.id}><td><b className="event-id">{event.id}</b><small>{event.city} · {event.type}</small></td><td className="mono">{new Date(event.timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</td><td>{event.maskedVpa}</td><td>{formatInr(event.amount)}</td><td><div className="signal-tags">{event.signals.map((signal) => <span key={signal}>{signal}</span>)}</div></td><td><strong className={`risk-number risk-${event.score >= 75 ? "high" : event.score >= 45 ? "medium" : "low"}`}>{event.score}</strong></td><td><span className={`decision-pill ${event.status}`}>{event.status}</span></td></tr>)}</tbody></table>{!loading && !events.length && <div className="empty-events"><FileSearch size={32} /><p>No synthetic events match those filters.</p></div>}</div>
-      <aside className="event-brief"><p>DATA CARD / DEMO</p><h2>What you are looking at</h2><dl><div><dt>Records</dt><dd>8 synthetic</dd></div><div><dt>Identity</dt><dd>Masked VPAs</dd></div><div><dt>Storage</dt><dd>Read-only seed</dd></div><div><dt>Freshness</dt><dd>Fixed snapshot</dd></div></dl><div className="brief-note"><CircleCheck size={17} /><span>No claim of “live monitoring.” The earlier project simulated real time; this one states exactly what the data is.</span></div></aside>
+      <aside className="event-brief"><p>About this dataset</p><h2>Synthetic sample</h2><dl><div><dt>Records</dt><dd>8</dd></div><div><dt>Identity</dt><dd>Masked VPAs</dd></div><div><dt>Storage</dt><dd>Read-only</dd></div><div><dt>Freshness</dt><dd>Fixed snapshot</dd></div></dl><div className="brief-note"><span>These records are fabricated for demonstration. They do not represent live payments or real customers.</span></div></aside>
     </div>
   </section>;
 }
@@ -213,12 +206,12 @@ function PublicMoney() {
   const data = flow === "to" ? rupeeGoesTo : rupeeComesFrom;
   const max = Math.max(...data.map((item) => item.paise));
   return <section className="view-page budget-page">
-    <SectionHeader index="04" eyebrow="UNION BUDGET 2026–27" title="Public money" copy="The rupee, traced from official Budget Estimates—with its units, definitions, and primary document attached." />
-    <div className="source-banner"><div><Landmark size={19} /><p><b>Primary source verified</b><span>Government of India · Ministry of Finance · Budget at a Glance 2026–27</span></p></div><a href={BUDGET_SOURCE_URL} target="_blank" rel="noreferrer">Open official PDF <ExternalLink size={14} /></a></div>
+    <SectionHeader title="Union Budget 2026–27" copy="Explore selected Budget Estimates and the Government of India’s breakdown of where each rupee comes from and goes." />
+    <div className="source-banner"><div><Landmark size={19} /><p><b>Source</b><span>Government of India · Ministry of Finance · Budget at a Glance 2026–27</span></p></div><a href={BUDGET_SOURCE_URL} target="_blank" rel="noreferrer">Open PDF <ExternalLink size={14} /></a></div>
     <div className="budget-metrics">{budgetSummary.map((metric) => <article key={metric.label}><p>{metric.label}</p><strong>{metric.unit.startsWith("₹") ? "₹" : ""}{metric.value.toFixed(metric.value < 10 ? 1 : 2)}</strong><span>{metric.unit.replace("₹ ", "")} · {metric.note}</span></article>)}</div>
     <div className="money-grid">
-      <article className="money-map"><div className="panel-title"><div><p>THE ONE-RUPEE MAP</p><h2>Where each rupee {flow === "to" ? "goes" : "comes from"}</h2></div><div className="segment-toggle"><button className={flow === "to" ? "active" : ""} onClick={() => setFlow("to")}>Goes to</button><button className={flow === "from" ? "active" : ""} onClick={() => setFlow("from")}>Comes from</button></div></div><div className="allocation-list">{data.map((item, index) => <div className="allocation-row" key={item.label}><span>{String(index + 1).padStart(2, "0")}</span><p>{item.label}</p><div><i style={{ width: `${(item.paise / max) * 100}%` }} /></div><strong>{item.paise}p</strong></div>)}</div><p className="chart-note">Rounded paise per rupee of Union Budget receipts/expenditure. Individual items may not sum exactly due to rounding and the source’s netting conventions.</p></article>
-      <aside className="fiscal-card"><p>FISCAL DEFICIT / BE 2026–27</p><div className="deficit-lens"><strong>4.3</strong><span>% OF GDP</span></div><div className="fiscal-scale"><i /><span>0%</span><span>6%</span></div><p>The fiscal deficit is the difference between total expenditure and total receipts excluding debt capital receipts. It reflects the Government&apos;s borrowing requirement.</p><dl><div><dt>Estimated GDP</dt><dd>₹393.00L Cr</dd></div><div><dt>Fiscal deficit</dt><dd>₹16.96L Cr</dd></div><div><dt>Primary deficit</dt><dd>0.7% GDP</dd></div></dl></aside>
+      <article className="money-map"><div className="panel-title"><div><p>Per rupee</p><h2>Where it {flow === "to" ? "goes" : "comes from"}</h2></div><div className="segment-toggle"><button className={flow === "to" ? "active" : ""} onClick={() => setFlow("to")}>Goes to</button><button className={flow === "from" ? "active" : ""} onClick={() => setFlow("from")}>Comes from</button></div></div><div className="allocation-list">{data.map((item) => <div className="allocation-row" key={item.label}><p>{item.label}</p><div><i style={{ width: `${(item.paise / max) * 100}%` }} /></div><strong>{item.paise}p</strong></div>)}</div><p className="chart-note">Rounded paise per rupee. Individual items may not sum exactly because the source rounds figures and nets some receipts.</p></article>
+      <aside className="fiscal-card"><p>Fiscal deficit · BE 2026–27</p><div className="deficit-lens"><strong>4.3</strong><span>% of GDP</span></div><div className="fiscal-scale"><i /><span>0%</span><span>6%</span></div><p>The fiscal deficit is total expenditure minus total receipts, excluding debt capital receipts. It represents the Government&apos;s borrowing requirement.</p><dl><div><dt>Estimated GDP</dt><dd>₹393.00L Cr</dd></div><div><dt>Fiscal deficit</dt><dd>₹16.96L Cr</dd></div><div><dt>Primary deficit</dt><dd>0.7% GDP</dd></div></dl></aside>
     </div>
     <div className="method-note"><CircleAlert size={18} /><div><b>Reading note</b><p>BE means Budget Estimates, not actual spending. RupeeLens does not convert a short historical series into a confident forecast. Comparisons should account for inflation, revised estimates, classification changes, and actuals.</p></div></div>
   </section>;
@@ -226,10 +219,10 @@ function PublicMoney() {
 
 function Method() {
   return <section className="view-page">
-    <SectionHeader index="05" eyebrow="METHOD & LIMITS" title="How the lens works" copy="A credible analytical tool should make it easy to inspect not only its results, but its boundaries." />
-    <div className="method-hero"><div><p className="kicker">THE PRODUCT PROMISE</p><h2>Nothing important hides behind a score.</h2></div><p>RupeeLens is designed as a portfolio-quality demonstration of responsible analytical UX. It shows how a better system can disclose data class, source, assumptions, rule contributions, and decision limits at the point of use.</p></div>
-    <div className="method-cards"><article><span>01</span><ShieldCheck size={25} /><h3>Explainability</h3><p>Risk recommendations enumerate each deterministic contribution. No probability is presented without validation evidence.</p></article><article><span>02</span><Database size={25} /><h3>Provenance</h3><p>Payment events are marked synthetic. Budget aggregates link directly to the Ministry of Finance document.</p></article><article><span>03</span><Fingerprint size={25} /><h3>Privacy</h3><p>Identifiers are masked, scenario requests are not persisted, and the demo uses no genuine customer data.</p></article><article><span>04</span><Gauge size={25} /><h3>Decision scope</h3><p>The score prioritises review. It does not accuse a person, block money in production, or replace institutional checks.</p></article></div>
-    <div className="rulebook"><div className="panel-title"><div><p>RULEBOOK / V1</p><h2>Current scoring contributions</h2></div><Radar size={21} /></div>{[["New device under 3 days", "+24", "Less behavioural history is available."],["Location above 500 km/h", "+28", "The observed change exceeds plausible travel."],["Identity mismatch", "+22", "VPA and account identity fields disagree."],["Amount above ₹25,000", "+18", "Payment value increases review priority."],["Two or more failures", "+16", "Repeated attempts preceded the payment."],["New beneficiary", "+13", "No prior payment relationship is present."]].map(([rule, points, detail]) => <div className="rule-row" key={rule}><b>{rule}</b><strong>{points}</strong><p>{detail}</p></div>)}</div>
+    <SectionHeader title="Methodology" copy="How the sample data, scoring rules, and budget figures are handled." />
+    <div className="method-intro"><p>The payment score is a deterministic demonstration. It adds fixed points for the conditions below and suggests allow, review, or hold based on the total. It is not trained on customer data and is not a production fraud model.</p></div>
+    <div className="method-cards"><article><ShieldCheck size={25} /><h3>Scoring</h3><p>Each result lists the rules that contributed to the score.</p></article><article><Database size={25} /><h3>Sources</h3><p>Events are synthetic. Budget figures link to the Ministry of Finance PDF.</p></article><article><Fingerprint size={25} /><h3>Privacy</h3><p>Sample VPAs are masked and submitted scenarios are not stored.</p></article><article><Gauge size={25} /><h3>Scope</h3><p>The score suggests a review action; it does not determine fraud.</p></article></div>
+    <div className="rulebook"><div className="panel-title"><div><p>Scoring rules</p><h2>Point contributions</h2></div><Radar size={21} /></div>{[["New device under 3 days", "+24", "Less behavioural history is available."],["Location above 500 km/h", "+28", "The observed change exceeds plausible travel."],["Identity mismatch", "+22", "VPA and account identity fields disagree."],["Amount above ₹25,000", "+18", "Payment value increases review priority."],["Two or more failures", "+16", "Repeated attempts preceded the payment."],["New beneficiary", "+13", "No prior payment relationship is present."]].map(([rule, points, detail]) => <div className="rule-row" key={rule}><b>{rule}</b><strong>{points}</strong><p>{detail}</p></div>)}</div>
     <div className="release-boundary"><h2>Before real-world use</h2><div><span>Authenticate users and authorise actions</span><span>Encrypt and minimise retained data</span><span>Validate rules on representative data</span><span>Measure false-positive impact</span><span>Add audit trails and human escalation</span><span>Complete legal and domain review</span></div></div>
   </section>;
 }

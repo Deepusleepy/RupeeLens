@@ -11,11 +11,12 @@ test("renders the RupeeLens product surface", async () => {
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, context);
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /<title>RupeeLens — Follow the money trail<\/title>/i);
-  assert.match(html, /Follow the money/);
-  assert.match(html, /No real payment data/);
-  assert.match(html, /Official budget source/);
+  assert.match(html, /<title>RupeeLens — Payment risk and public finance<\/title>/i);
+  assert.match(html, /Look closer at how money moves/);
+  assert.match(html, /Synthetic payment data/);
+  assert.match(html, /Union Budget 2026–27/);
   assert.doesNotMatch(html, /KuldeepB19|kuldeepb19|Bharat Signals/i);
+  assert.doesNotMatch(html, /old experiments|old workspaces|one lens|every money trail/i);
 });
 
 test("returns an explainable held decision", async () => {
