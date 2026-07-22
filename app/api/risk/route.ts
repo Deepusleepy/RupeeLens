@@ -6,6 +6,10 @@ type Scenario = {
   newBeneficiary: boolean;
   vpaMismatch: boolean;
   locationVelocityKmH: number;
+  location?: string;
+  transactionType?: string;
+  senderBank?: string;
+  receiverBank?: string;
 };
 
 type Contribution = { signal: string; points: number; detail: string };
@@ -35,6 +39,7 @@ export async function POST(request: Request) {
   if (input.amount > 25_000) contributions.push({ signal: "High value", points: 18, detail: "Amount is above ₹25,000" });
   else if (input.amount > 10_000) contributions.push({ signal: "Elevated value", points: 9, detail: "Amount is above ₹10,000" });
   if (input.hour < 5) contributions.push({ signal: "Low-activity hour", points: 14, detail: "Payment falls between midnight and 05:00" });
+  if (input.location === "Unknown" || input.location === "Foreign") contributions.push({ signal: "Untrusted location", points: 20, detail: `${input.location} is treated as a high-review origin in this demonstration` });
   if (input.deviceAgeDays < 3) contributions.push({ signal: "New device", points: 24, detail: "Device was enrolled less than three days ago" });
   if (input.failedAttempts >= 2) contributions.push({ signal: "Repeated attempts", points: 16, detail: "Two or more failures preceded the payment" });
   if (input.newBeneficiary) contributions.push({ signal: "New beneficiary", points: 13, detail: "No prior payment relationship is present" });

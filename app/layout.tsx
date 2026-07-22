@@ -7,17 +7,17 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "RupeeLens — Payment risk and public finance",
-  description: "Test UPI transaction scenarios, inspect masked payment events, and explore India’s Union Budget 2026–27.",
+  description: "Analyse UPI transaction scenarios, security logs, masked payment events, and India’s Union Budget.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "RupeeLens",
-    description: "Payment risk analysis and Union Budget data in one practical workspace.",
+    description: "Payment risk, security-log analysis, and Union Budget data in one practical workspace.",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "RupeeLens",
-    description: "Payment risk analysis and Union Budget data in one practical workspace.",
+    description: "Payment risk, security-log analysis, and Union Budget data in one practical workspace.",
   },
 };
 
