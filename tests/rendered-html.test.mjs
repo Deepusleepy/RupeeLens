@@ -1,0 +1,52 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+const { default: worker } = await import(workerUrl.href);
+const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
+const context = { waitUntil() {}, passThroughOnException() {} };
+
+test("renders the RupeeLens product surface", async () => {
+  const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, context);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<title>RupeeLens — Follow the money trail<\/title>/i);
+  assert.match(html, /Follow the money/);
+  assert.match(html, /No real payment data/);
+  assert.match(html, /Official budget source/);
+  assert.doesNotMatch(html, /KuldeepB19|kuldeepb19|Bharat Signals/i);
+});
+
+test("returns an explainable held decision", async () => {
+  const response = await worker.fetch(new Request("http://localhost/api/risk", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ amount: 50000, hour: 2, deviceAgeDays: 1, failedAttempts: 3, newBeneficiary: true, vpaMismatch: true, locationVelocityKmH: 700 }),
+  }), env, context);
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.score, 100);
+  assert.equal(result.decision, "hold");
+  assert.ok(result.contributions.length >= 6);
+  assert.match(result.caveat, /not a fraud determination/i);
+});
+
+test("rejects invalid risk inputs", async () => {
+  const response = await worker.fetch(new Request("http://localhost/api/risk", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ amount: -1, hour: 45, deviceAgeDays: 0, failedAttempts: 0, newBeneficiary: false, vpaMismatch: false, locationVelocityKmH: 0 }),
+  }), env, context);
+  assert.equal(response.status, 400);
+});
+
+test("filters the synthetic event trail without exposing raw identifiers", async () => {
+  const response = await worker.fetch(new Request("http://localhost/api/events?status=held&q=travel"), env, context);
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.meta.dataClass, "synthetic-demo");
+  assert.equal(result.events.length, 1);
+  assert.match(result.events[0].maskedVpa, /•/);
+  assert.equal(result.events[0].status, "held");
+});
