@@ -1,12 +1,12 @@
 # RupeeLens
 
-Payment risk and public finance, examined clearly.
+Transactions, security operations, and public finance in one analytical workspace.
 
 RupeeLens is a full-stack analytical workspace for:
 
-- explainable UPI transaction-risk scenarios;
-- privacy-safe payment-event investigation; and
-- sourced India Union Budget context.
+- synthetic UPI transaction generation, prediction, exploration, and model diagnostics;
+- five-family security-log generation, upload, anomaly detection, and reporting; and
+- historical and current India Union Budget analysis, comparison, forecasting, querying, and export.
 
 It keeps payment data synthetic, shows how every risk score is calculated, and links budget figures to the official source.
 
@@ -22,15 +22,17 @@ Official source: <https://www.indiabudget.gov.in/doc/budget_at_glance/bag1.pdf>
 
 ## Features
 
-- interactive server-side risk evaluator with contribution traces;
-- reusable risk presets, session review history, and client-side CSV batch analysis;
-- searchable and filterable event API;
-- masked synthetic payment-event trail with summary metrics and CSV export;
-- five-family security log explorer with anomaly triage and filtered export;
-- historical ministry allocation explorer covering FY2014–15 to FY2024–25;
-- indexed, year-on-year, and directional forecast views;
-- one-rupee receipt and expenditure maps;
-- 2026–27 fiscal aggregates with primary-source links;
+- configurable transaction generator supporting up to 50,000 rows;
+- dual-model-style prediction, explanations, presets, history, and batch CSV scoring;
+- multi-filter transaction explorer with visual breakdowns and export;
+- accuracy, precision, recall, F1, ROC/AUC, confusion matrix, and feature-importance views;
+- five security-log families with independent uploads, drill-downs, anomaly thresholds, heatmap, and reports;
+- historical ministry allocation dashboard covering FY2014–15 to FY2024–25;
+- ministry drill-down, outlier control, event notes, YoY heatmap, and budget-share views;
+- linear and polynomial forecasts with model comparison and approximate confidence bands;
+- multi-ministry absolute, indexed, YoY, and budget-share comparisons;
+- Smart Query plus raw, summary, pivot, spreadsheet, and cleaned-data exports;
+- 2026–27 fiscal source links;
 - responsive editorial interface with reduced-motion support;
 - integration tests covering rendering and both APIs.
 
