@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -7,15 +8,34 @@ const { default: worker } = await import(workerUrl.href);
 const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
 const context = { waitUntil() {}, passThroughOnException() {} };
 
+test("keeps all three workspace workflows wired into the product", async () => {
+  const source = await readFile(new URL("../app/workspaces.tsx", import.meta.url), "utf8");
+  for (const feature of [
+    "Payment trail",
+    "Batch CSV",
+    "Model performance",
+    "Deep dive",
+    "Import & export",
+    "2026–27 overview",
+    "Ministry drill-down",
+    "Forecasting",
+    "Smart Query",
+    "Excel workbook",
+  ]) {
+    assert.match(source, new RegExp(feature, "i"), `missing workspace feature: ${feature}`);
+  }
+});
+
 test("renders the RupeeLens product surface", async () => {
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, context);
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<title>RupeeLens — Payment risk and public finance<\/title>/i);
-  assert.match(html, /Look closer at how money moves/);
+  assert.match(html, /Investigate money from transaction to treasury/);
   assert.match(html, /Synthetic payment data/);
-  assert.match(html, /2026–27 Union Budget/);
+  assert.match(html, /Budget analytics/);
   assert.match(html, /Security logs/);
+  assert.match(html, /Dual-model comparison/);
   assert.doesNotMatch(html, /KuldeepB19|kuldeepb19|Bharat Signals/i);
   assert.doesNotMatch(html, /old experiments|old workspaces|one lens|every money trail/i);
 });

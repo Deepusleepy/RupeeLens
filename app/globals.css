@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./workspaces.css";
 
 :root {
   --paper: #f4f1e8;
