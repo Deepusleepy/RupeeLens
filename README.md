@@ -1,87 +1,82 @@
 # RupeeLens
 
-Transactions, security operations, and public finance in one analytical workspace.
+RupeeLens is a TypeScript dashboard for studying UPI transaction risk, security logs, and Indian Union Budget data in one place.
 
-RupeeLens is a full-stack analytical workspace for:
+[Open the live app](https://rupeelens.orewakaizoku1999.chatgpt.site)
 
-- synthetic UPI transaction generation, prediction, exploration, and model diagnostics;
-- five-family security-log generation, upload, anomaly detection, and reporting; and
-- historical and current India Union Budget analysis, comparison, forecasting, querying, and export.
+## What it does
 
-It keeps payment data synthetic, shows how every risk score is calculated, and links budget figures to the official source.
+### Transaction analysis
 
-## Product boundaries
+- Generates synthetic UPI transactions with adjustable fraud rates
+- Scores individual transactions with two transparent rule-based model styles
+- Filters and exports transaction data
+- Handles batch CSV scoring
+- Shows model metrics, feature importance, a confusion matrix, and an ROC view
 
-- Payment events are synthetic and use masked identifiers.
-- Risk scoring is deterministic decision support, not a fraud verdict.
-- Scenario requests are evaluated without application-level persistence.
-- Budget figures are Budget Estimates, not actual expenditure or forecasts.
-- Public-finance aggregates are sourced from the Government of India, Ministry of Finance, *Budget at a Glance 2026–27*.
+### Security log analysis
 
-Official source: <https://www.indiabudget.gov.in/doc/budget_at_glance/bag1.pdf>
+- Works with login, session, authentication, request, and service logs
+- Accepts a separate CSV for each log family
+- Detects brute-force attempts, credential retries, request floods, long sessions, and suspended services
+- Includes anomaly queues, hourly trends, a day-by-hour heatmap, and downloadable reports
 
-## Features
+### Budget analysis
 
-- configurable transaction generator supporting up to 50,000 rows;
-- dual-model-style prediction, explanations, presets, history, and batch CSV scoring;
-- multi-filter transaction explorer with visual breakdowns and export;
-- accuracy, precision, recall, F1, ROC/AUC, confusion matrix, and feature-importance views;
-- five security-log families with independent uploads, drill-downs, anomaly thresholds, heatmap, and reports;
-- historical ministry allocation dashboard covering FY2014–15 to FY2024–25;
-- ministry drill-down, outlier control, event notes, YoY heatmap, and budget-share views;
-- linear and polynomial forecasts with model comparison and approximate confidence bands;
-- multi-ministry absolute, indexed, YoY, and budget-share comparisons;
-- Smart Query plus raw, summary, pivot, spreadsheet, and cleaned-data exports;
-- 2026–27 fiscal source links;
-- responsive editorial interface with reduced-motion support;
-- integration tests covering rendering and both APIs.
+- Covers five ministries from FY2014-15 to FY2024-25
+- Includes selected figures from the Union Budget 2026-27
+- Compares allocations, shares, year-on-year changes, and ministry trends
+- Provides linear and polynomial projections with approximate confidence bands
+- Supports custom CSV files, simple text queries, and spreadsheet exports
+
+## Data and limitations
+
+The transaction and security records included with the project are synthetic. Uploaded files are processed in the browser and are not stored by the app.
+
+The risk scores are deterministic examples for exploration. They are not trained banking models and should not be used to approve or block real payments.
+
+Budget figures are estimates, not actual expenditure. The 2026-27 figures link back to the Government of India, Ministry of Finance source document: [Budget at a Glance](https://www.indiabudget.gov.in/doc/budget_at_glance/bag1.pdf).
+
+## Tech stack
+
+- Next.js and React
+- TypeScript
+- Vite and vinext
+- Cloudflare Workers
+- Plain CSS and Canvas charts
 
 ## Run locally
 
 Node.js 22.13 or newer is required.
 
 ```bash
+git clone https://github.com/Deepusleepy/RupeeLens.git
+cd RupeeLens
 npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+The local app runs at <http://localhost:3000>.
 
-## Validate
+## Checks
 
 ```bash
 npm run lint
+npx tsc --noEmit
 npm test
 ```
 
-## Risk API
+`npm test` creates a production build and runs the route and API tests.
 
-`POST /api/risk`
+## API routes
 
-```json
-{
-  "amount": 12500,
-  "hour": 2,
-  "deviceAgeDays": 1,
-  "failedAttempts": 2,
-  "newBeneficiary": true,
-  "vpaMismatch": false,
-  "locationVelocityKmH": 680
-}
-```
+- `POST /api/risk` scores one transaction scenario and returns its signal contributions.
+- `GET /api/events` returns the masked demonstration event trail. It supports `q` and `status` query parameters.
 
-The response returns a score, recommended action, signal density, contribution trace, and explicit caveat.
+## Project status
 
-## Event API
-
-`GET /api/events?q=travel&status=held`
-
-Supported status filters: `all`, `allowed`, `review`, and `held`.
-
-## Before production use
-
-Real payment processing would additionally require authentication and authorisation, encryption and retention controls, rate limiting, audit trails, monitoring, representative model or rule validation, false-positive analysis, human escalation, and legal/domain review.
+This is a student project and an analytical prototype. Using it with real payment data would require authentication, access controls, encrypted storage, rate limiting, audit logs, monitoring, model validation, and a proper security review.
 
 ## License
 
-MIT © 2026 Deepu
+MIT License. See [LICENSE](LICENSE).
