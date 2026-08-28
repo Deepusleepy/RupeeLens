@@ -1,8 +1,14 @@
 "use client";
 
 import { ArrowRight, Check, Code2, ExternalLink, Gauge, Menu, Moon, ShieldCheck, Sun, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Component, ReactNode, useEffect, useMemo, useState } from "react";
 import { BudgetWorkspace, PaymentWorkspace, SecurityWorkspace } from "./workspaces";
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() { return this.state.hasError ? <p className="lab-empty">Something went wrong rendering this workspace.</p> : this.props.children; }
+}
 
 type View = "overview" | "payments" | "security" | "budget" | "method";
 const views: { id: View; label: string }[] = [
@@ -25,7 +31,7 @@ function Shell({ active, setActive, children }: { active: View; setActive: (view
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("rupeelens-theme", theme);
   }, [theme]);
-  return <div className="site-shell"><header className="masthead"><Wordmark /><nav className="desktop-nav" aria-label="Primary navigation">{views.map((view) => <button key={view.id} className={active === view.id ? "active" : ""} onClick={() => setActive(view.id)}>{view.label}</button>)}</nav><div className="mast-actions"><span className="privacy-stamp"><ShieldCheck size={14} /> Synthetic payment data</span><button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button><button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={20} /></button></div></header>{menuOpen && <div className="mobile-nav"><button className="close-menu" onClick={() => setMenuOpen(false)} aria-label="Close navigation"><X size={22} /></button><Wordmark /><nav>{views.map((view) => <button key={view.id} onClick={() => { setActive(view.id); setMenuOpen(false); }}>{view.label}</button>)}</nav></div>}<main>{children}</main><footer className="site-footer"><Wordmark /><p>Synthetic transaction and security data · Official budget source linked</p><a href="https://github.com/Deepusleepy/RupeeLens" target="_blank" rel="noreferrer"><Code2 size={15} /> View source <ExternalLink size={12} /></a></footer></div>;
+  return <div className="site-shell"><header className="masthead"><Wordmark /><nav className="desktop-nav" aria-label="Primary navigation">{views.map((view) => <button key={view.id} className={active === view.id ? "active" : ""} onClick={() => setActive(view.id)}>{view.label}</button>)}</nav><div className="mast-actions"><span className="privacy-stamp"><ShieldCheck size={14} /> Synthetic payment data</span><button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme" aria-pressed={theme === "dark"}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button><button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={20} /></button></div></header>{menuOpen && <div className="mobile-nav"><button className="close-menu" onClick={() => setMenuOpen(false)} aria-label="Close navigation"><X size={22} /></button><Wordmark /><nav>{views.map((view) => <button key={view.id} onClick={() => { setActive(view.id); setMenuOpen(false); }}>{view.label}</button>)}</nav></div>}<main>{children}</main><footer className="site-footer"><Wordmark /><p>Synthetic transaction and security data · Official budget source linked</p><a href="https://github.com/Deepusleepy/RupeeLens" target="_blank" rel="noreferrer"><Code2 size={15} /> View source <ExternalLink size={12} /></a></footer></div>;
 }
 
 function Overview({ navigate }: { navigate: (view: View) => void }) {
@@ -38,6 +44,6 @@ function Method() {
 
 export function RupeeLens() {
   const [active, setActive] = useState<View>("overview");
-  const content = useMemo(() => active === "payments" ? <PaymentWorkspace /> : active === "security" ? <SecurityWorkspace /> : active === "budget" ? <BudgetWorkspace /> : active === "method" ? <Method /> : <Overview navigate={setActive} />, [active]);
+  const content = useMemo(() => active === "payments" ? <ErrorBoundary><PaymentWorkspace /></ErrorBoundary> : active === "security" ? <ErrorBoundary><SecurityWorkspace /></ErrorBoundary> : active === "budget" ? <ErrorBoundary><BudgetWorkspace /></ErrorBoundary> : active === "method" ? <Method /> : <Overview navigate={setActive} />, [active]);
   return <Shell active={active} setActive={setActive}>{content}</Shell>;
 }
