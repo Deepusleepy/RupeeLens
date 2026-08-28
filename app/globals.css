@@ -180,3 +180,6 @@ main { min-height: calc(100vh - 76px); }
   .method-cards { grid-template-columns: 1fr; }.release-boundary { padding: 28px 22px; }.release-boundary > div { grid-template-columns: 1fr; }
   .site-footer { grid-template-columns: 1fr; gap: 24px; justify-items: start; }.site-footer p { text-align: left; }.site-footer > a { justify-self: start; }
 }
+
+.form-error { color: var(--rust, #b5453b); font-size: 12px; margin: 6px 0; }
+.form-note { color: var(--muted); font-size: 12px; margin: 6px 0; }
