@@ -39,10 +39,10 @@ Budget figures are estimates, not actual expenditure. The 2026-27 figures link b
 
 ## Tech stack
 
-- Next.js and React
+- React
 - TypeScript
-- Vite and vinext
-- Cloudflare Workers
+- Vite
+- Tailwind CSS
 - Plain CSS and Canvas charts
 
 ## Run locally
@@ -56,7 +56,7 @@ npm install
 npm run dev
 ```
 
-The local app runs at <http://localhost:3000>.
+The local app runs at <http://localhost:5173/RupeeLens/>.
 
 ## Checks
 
@@ -64,15 +64,9 @@ The local app runs at <http://localhost:3000>.
 npm run lint
 npx tsc --noEmit
 npm test
-npm run build:pages
 ```
 
-`npm test` creates a production build and runs the route and API tests.
-
-## API routes
-
-- `POST /api/risk` scores one transaction scenario and returns its signal contributions.
-- `GET /api/events` returns the masked demonstration event trail. It supports `q` and `status` query parameters.
+`npm test` builds the pages bundle and runs the HTML tests.
 
 ## Project status
 
