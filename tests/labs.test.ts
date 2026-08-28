@@ -63,14 +63,14 @@ test("scoreTransaction with negative failedAttempts clamps to 0 (score >= 3)", (
   const negative = scoreTransaction({ amount: 850, hour: 13, location: "Mumbai", type: "P2P", senderBank: "SBI", receiverBank: "HDFC", newDevice: false, failedAttempts: -5 });
   assert.ok(negative.score >= 3, "clamped score should be at least the base of 3");
   assert.equal(negative.score, base.score);
-  assert.equal(negative.rfScore, base.rfScore);
-  assert.equal(negative.xgbScore, base.xgbScore);
+  assert.equal(negative.logisticScore, base.logisticScore);
+  assert.equal(negative.forestScore, base.forestScore);
 });
 
 test("scoreTransaction with 0 and negative failedAttempts produce same score", () => {
   const zero = scoreTransaction({ amount: 68000, hour: 2, location: "Foreign", type: "P2P", senderBank: "SBI", receiverBank: "HDFC", newDevice: true, failedAttempts: 0 });
   const negative = scoreTransaction({ amount: 68000, hour: 2, location: "Foreign", type: "P2P", senderBank: "SBI", receiverBank: "HDFC", newDevice: true, failedAttempts: -10 });
   assert.equal(zero.score, negative.score);
-  assert.equal(zero.rfScore, negative.rfScore);
-  assert.equal(zero.xgbScore, negative.xgbScore);
+  assert.equal(zero.logisticScore, negative.logisticScore);
+  assert.equal(zero.forestScore, negative.forestScore);
 });
