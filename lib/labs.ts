@@ -91,14 +91,16 @@ export const budgetRows: BudgetRow[] = budgetHistory.map((row) => {
   return { ...row, revenue, capital, plan: pre ? row.total * .58 : null, nonPlan: pre ? row.total * .42 : null };
 });
 
-export function forecastSeries(values: number[], horizon: number, polynomial = false) {
-  const n = values.length; const minLen = polynomial ? 3 : 2; if (n < minLen) { const last = values.at(-1) ?? 0; return Array.from({ length: horizon }, () => ({ value: last, low: last, high: last })); }
+export function forecastSeries(values: number[], horizon: number, acceleration = false) {
+  const n = values.length; const minLen = acceleration ? 3 : 2; if (n < minLen) { const last = values.at(-1) ?? 0; return Array.from({ length: horizon }, () => ({ value: last, low: last, high: last })); }
   const xs = values.map((_, index) => index);
-  if (!polynomial) {
+  if (!acceleration) {
     const xm = xs.reduce((a, b) => a + b, 0) / n; const ym = values.reduce((a, b) => a + b, 0) / n;
     const slope = xs.reduce((sum, x, i) => sum + (x - xm) * (values[i] - ym), 0) / xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
-    const intercept = ym - slope * xm; const fitted = xs.map((x) => intercept + slope * x); const residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]) ** 2, 0) / n);
-    return Array.from({ length: horizon }, (_, i) => ({ value: Math.max(0, intercept + slope * (n + i)), low: Math.max(0, intercept + slope * (n + i) - 1.96 * residual), high: intercept + slope * (n + i) + 1.96 * residual }));
+    const intercept = ym - slope * xm; const fitted = xs.map((x) => intercept + slope * x);
+    const residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]) ** 2, 0) / (n - 2));
+    const sxx = xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
+    return Array.from({ length: horizon }, (_, i) => { const xf = n + i; const pi = residual * Math.sqrt(1 + 1 / n + (xf - xm) ** 2 / sxx); const value = Math.max(0, intercept + slope * xf); return { value, low: Math.max(0, value - 1.96 * pi), high: value + 1.96 * pi }; });
   }
   const recent = values.slice(-4); const d1 = recent.at(-1)! - recent.at(-2)!; const d0 = recent.at(-2)! - recent.at(-3)!; const accel = (d1 - d0) * .35;
   const residual = Math.abs(accel) + Math.abs(d1) * .18;
