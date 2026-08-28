@@ -65,7 +65,7 @@ export function generateSecurityLogs(scale = 500, seed = 42): SecurityLog[] {
     const family = families[index % 5]; const suspicious = random() < .16; const critical = suspicious && random() < .42;
     let status = "normal", value = 1, detail = "Normal activity";
     if (family === "Login") { status = suspicious ? "failed" : "success"; value = suspicious ? 6 + Math.floor(random() * 8) : 1; detail = suspicious ? `${value} failed attempts from this source` : "Successful login"; }
-    if (family === "Session") { value = suspicious ? (random() < .5 ? 1 : 181 + Math.floor(random() * 300)) : 5 + Math.floor(random() * 55); status = suspicious ? "abnormal" : "normal"; detail = `Session duration ${value} minutes`; }
+    if (family === "Session") { const noisy = random() < .12; if (suspicious) value = noisy ? 20 + Math.floor(random() * 41) : (random() < .5 ? 1 : 181 + Math.floor(random() * 300)); else value = noisy ? 1 + Math.floor(random() * 2) : 5 + Math.floor(random() * 55); status = suspicious ? "abnormal" : "normal"; detail = `Session duration ${value} minutes`; }
     if (family === "Authentication") { value = suspicious ? 11 + Math.floor(random() * 5) : 1; status = suspicious ? "rejected" : "authenticated"; detail = suspicious ? `${value} rejected authentication attempts` : "Token accepted"; }
     if (family === "Request") { status = critical ? "dos_attack" : suspicious ? "blank" : "normal"; value = critical ? 10000 + Math.floor(random() * 40000) : suspicious ? Math.floor(random() * 50) : 100 + Math.floor(random() * 4900); detail = `${status.replace("_", " ")} request · ${value} bytes`; }
     if (family === "Service") { status = critical ? "suspended" : suspicious ? "pending" : "active"; value = 1; detail = `${status} UPI service subscription`; }
@@ -77,7 +77,7 @@ export function generateSecurityLogs(scale = 500, seed = 42): SecurityLog[] {
 export function securityAnomalies(logs: SecurityLog[]) {
   const count = (family: SecurityLog["family"], predicate: (log: SecurityLog) => boolean) => logs.filter((log) => log.family === family && predicate(log)).length;
   return [
-    { category: "Brute force", severity: "critical", count: count("Login", (log) => log.status === "failed" && log.value > 5), description: "Login sources with more than five failures" },
+    { category: "Brute force", severity: "critical", count: count("Login", (log) => log.status === "failed" && log.value > 5), description: "Login events with more than five failures" },
     { category: "Abnormal session", severity: "warning", count: count("Session", (log) => log.value < 3 || log.value > 180), description: "Sessions shorter than 3 or longer than 180 minutes" },
     { category: "Credential stuffing", severity: "critical", count: count("Authentication", (log) => log.value > 10), description: "Authentication events with more than ten retries" },
     { category: "DOS request", severity: "critical", count: count("Request", (log) => log.status === "dos_attack"), description: "Requests classified as denial-of-service traffic" },
