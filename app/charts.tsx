@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 export type ChartDatum = { label: string; value: number };
 
-const palette = ["#145a3a", "#c58b2a", "#315d77", "#a64f38", "#7f8f6a", "#674c78", "#8b7252", "#477b78"];
+const palette = ["var(--green)", "var(--gold)", "var(--blue)", "var(--rust)", "#7f8f6a", "#674c78", "#8b7252", "#477b78"];
 
 export function TrendChart({ data, secondary, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; secondary?: ChartDatum[]; formatter?: (value: number) => string }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -15,17 +15,21 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
       const width = element.clientWidth; const height = 250; const ratio = window.devicePixelRatio || 1;
       element.width = width * ratio; element.height = height * ratio; const context = element.getContext("2d"); if (!context) return;
       context.scale(ratio, ratio); context.clearRect(0, 0, width, height);
+      const css = getComputedStyle(document.documentElement);
+      const lineColor = css.getPropertyValue("--line").trim() || "#cbc7ba";
+      const green = css.getPropertyValue("--green").trim() || "#175d3d";
+      const blue = css.getPropertyValue("--blue").trim() || "#356b82";
       const all = [...data, ...(secondary ?? [])].map((item) => item.value); const max = Math.max(...all, 1); const min = Math.min(...all, 0); const range = max - min || 1;
       const x = (index: number, length: number) => 16 + index * ((width - 32) / Math.max(1, length - 1)); const y = (value: number) => 14 + (max - value) / range * 205;
-      context.strokeStyle = "#d8d3c6"; context.lineWidth = 1;
+      context.strokeStyle = lineColor; context.lineWidth = 1;
       for (let i = 0; i < 4; i++) { const gy = 14 + i * 68; context.beginPath(); context.moveTo(0, gy); context.lineTo(width, gy); context.stroke(); }
       const plot = (series: ChartDatum[], color: string, dashed = false, fill = false) => {
         context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value)));
-        if (fill && series.length) { context.lineTo(x(series.length - 1, series.length), 220); context.lineTo(x(0, series.length), 220); context.closePath(); context.fillStyle = "rgba(20,90,58,.10)"; context.fill(); context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value))); }
+        if (fill && series.length) { context.lineTo(x(series.length - 1, series.length), 220); context.lineTo(x(0, series.length), 220); context.closePath(); context.fillStyle = `${green}1a`; context.fill(); context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value))); }
         context.setLineDash(dashed ? [7, 6] : []); context.strokeStyle = color; context.lineWidth = 2.5; context.stroke(); context.setLineDash([]);
         if (!dashed) series.forEach((item, index) => { context.beginPath(); context.arc(x(index, series.length), y(item.value), 3.2, 0, Math.PI * 2); context.fillStyle = color; context.fill(); });
       };
-      plot(data, palette[0], false, true); if (secondary) plot(secondary, palette[2], true);
+      plot(data, green, false, true); if (secondary) plot(secondary, blue, true);
     };
     draw(); const observer = new ResizeObserver(draw); observer.observe(element); return () => observer.disconnect();
   }, [data, secondary]);
