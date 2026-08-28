@@ -86,7 +86,7 @@ export function securityAnomalies(logs: SecurityLog[]) {
 }
 
 export const budgetRows: BudgetRow[] = budgetHistory.map((row) => {
-  const capitalShare = row.ministry === "Defence" ? .29 : row.ministry === "Home Affairs" ? .06 : row.ministry === "Health" ? .025 : .008;
+  const capitalShare = row.ministry === "Defence" ? .29 : row.ministry === "Home Affairs" ? .06 : row.ministry === "Health" ? .025 : row.ministry === "Agriculture" ? .07 : .008;
   const capital = row.total * capitalShare; const revenue = row.total - capital; const pre = row.year < 2017;
   return { ...row, revenue, capital, plan: pre ? row.total * .58 : null, nonPlan: pre ? row.total * .42 : null };
 });
