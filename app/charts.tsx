@@ -8,10 +8,17 @@ const palette = ["var(--green)", "var(--gold)", "var(--blue)", "var(--rust)", "#
 
 export function TrendChart({ data, secondary, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; secondary?: ChartDatum[]; formatter?: (value: number) => string }) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const drawRef = useRef<(() => void) | null>(null);
+  const dataRef = useRef({ data, secondary });
+  useEffect(() => {
+    dataRef.current = { data, secondary };
+    drawRef.current?.();
+  }, [data, secondary]);
   useEffect(() => {
     const element = canvas.current;
     if (!element) return;
     const draw = () => {
+      const { data: d, secondary: s } = dataRef.current;
       const width = element.clientWidth; const height = 250; const ratio = window.devicePixelRatio || 1;
       element.width = width * ratio; element.height = height * ratio; const context = element.getContext("2d"); if (!context) return;
       context.scale(ratio, ratio); context.clearRect(0, 0, width, height);
@@ -19,7 +26,7 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
       const lineColor = css.getPropertyValue("--line").trim() || "#cbc7ba";
       const green = css.getPropertyValue("--green").trim() || "#175d3d";
       const blue = css.getPropertyValue("--blue").trim() || "#356b82";
-      const all = [...data, ...(secondary ?? [])].map((item) => item.value); const max = Math.max(...all, 1); const min = Math.min(...all, 0); const range = max - min || 1;
+      const all = [...d, ...(s ?? [])].map((item) => item.value); const max = Math.max(...all, 1); const min = Math.min(...all, 0); const range = max - min || 1;
       const x = (index: number, length: number) => 16 + index * ((width - 32) / Math.max(1, length - 1)); const y = (value: number) => 14 + (max - value) / range * 205;
       context.strokeStyle = lineColor; context.lineWidth = 1;
       for (let i = 0; i < 4; i++) { const gy = 14 + i * 68; context.beginPath(); context.moveTo(0, gy); context.lineTo(width, gy); context.stroke(); }
@@ -29,10 +36,10 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
         context.setLineDash(dashed ? [7, 6] : []); context.strokeStyle = color; context.lineWidth = 2.5; context.stroke(); context.setLineDash([]);
         if (!dashed) series.forEach((item, index) => { context.beginPath(); context.arc(x(index, series.length), y(item.value), 3.2, 0, Math.PI * 2); context.fillStyle = color; context.fill(); });
       };
-      plot(data, green, false, true); if (secondary) plot(secondary, blue, true);
+      plot(d, green, false, true); if (s) plot(s, blue, true);
     };
-    draw(); const observer = new ResizeObserver(draw); observer.observe(element); return () => observer.disconnect();
-  }, [data, secondary]);
+    drawRef.current = draw; draw(); const observer = new ResizeObserver(draw); observer.observe(element); return () => { observer.disconnect(); drawRef.current = null; };
+  }, []);
   const last = data.at(-1);
   const points = data.length && last ? `${data[0].label}: ${formatter(data[0].value)} to ${last.label}: ${formatter(last.value)}` : "No data";
   return <div className="trend-chart" role="img" aria-label={`Trend chart. ${points}`}><canvas ref={canvas} /><div className="chart-axis"><span>{data[0]?.label}</span><span>{data[Math.floor(data.length / 2)]?.label}</span><span>{data.at(-1)?.label}</span></div>{secondary && <div className="chart-legend"><span><i className="solid" /> Primary</span><span><i className="dashed" /> Comparison</span></div>}</div>;
