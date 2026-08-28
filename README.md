@@ -64,9 +64,10 @@ The local app runs at <http://localhost:5173/RupeeLens/>.
 npm run lint
 npx tsc --noEmit
 npm test
+npm run test:integration
 ```
 
-`npm test` builds the pages bundle and runs the HTML tests.
+`npm test` runs the fast unit tests. `npm run test:integration` builds the pages bundle and runs the HTML tests.
 
 ## Project status
 
