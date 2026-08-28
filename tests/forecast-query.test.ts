@@ -38,7 +38,7 @@ test("compare branch regex includes vs and versus", () => {
 test("forecastSeries linear band widens with forecast horizon", () => {
   const result = forecastSeries([100, 135, 150, 175, 190], 3, false);
   assert.equal(result.length, 3);
-  const band0 = result[0].high - result[0].value;
-  const band2 = result[2].high - result[2].value;
+  const band0 = result[0]!.high - result[0]!.value;
+  const band2 = result[2]!.high - result[2]!.value;
   assert.ok(band2 > band0, `band should widen: band0=${band0}, band2=${band2}`);
 });

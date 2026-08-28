@@ -24,5 +24,5 @@ export function parseCsvWithHeaders(text: string): { headers: string[]; rows: Re
   const all = parseCsv(text.trim());
   if (!all.length) return { headers: [], rows: [] };
   const [headers, ...data] = all;
-  return { headers, rows: data.map((values) => Object.fromEntries(headers.map((header, i) => [header, values[i] ?? ""]))) };
+  return { headers: headers!, rows: data.map((values) => Object.fromEntries(headers!.map((header, i) => [header, values[i] ?? ""]))) };
 }

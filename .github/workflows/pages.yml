@@ -29,7 +29,8 @@ jobs:
       - uses: actions/configure-pages@v6
       - run: npm ci
       - run: npm run lint
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
+      - run: npm run test:unit
       - run: npm test
       - uses: actions/upload-pages-artifact@v5
         with:

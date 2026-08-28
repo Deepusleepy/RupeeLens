@@ -35,4 +35,9 @@ yarn-error.log*
 # typescript
 next-env.d.ts
 *.tsbuildinfo
+
+# build artifacts
+/dist/
+/.wrangler/
+/.vinext/
 /pages-dist/
