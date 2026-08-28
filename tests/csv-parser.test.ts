@@ -30,9 +30,9 @@ test("parseCsvWithHeaders returns headers and row objects", () => {
   const { headers, rows } = parseCsvWithHeaders("name,age\nAlice,30\nBob,25");
   assert.deepEqual(headers, ["name", "age"]);
   assert.equal(rows.length, 2);
-  assert.equal(rows[0].name, "Alice");
-  assert.equal(rows[0].age, "30");
-  assert.equal(rows[1].name, "Bob");
+  assert.equal(rows[0]!.name, "Alice");
+  assert.equal(rows[0]!.age, "30");
+  assert.equal(rows[1]!.name, "Bob");
 });
 
 test("parseCsvWithHeaders handles empty input", () => {

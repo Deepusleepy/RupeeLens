@@ -42,9 +42,9 @@ export function generateTransactions(count = 1000, fraudPercent = 10, seed = 42)
   return Array.from({ length: Math.min(50000, Math.max(100, count)) }, (_, index) => {
     const fraud = random() < fraudPercent / 100;
     const amount = Math.round((fraud ? 500 + Math.pow(random(), .35) * 199500 : 10 + Math.pow(random(), 2.4) * 49990) * 100) / 100;
-    const hour = fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)] : 6 + Math.floor(random() * 17);
-    const location = fraud && random() < .7 ? (random() < .55 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)];
-    const input = { amount, hour, location, type: types[Math.floor(random() * types.length)], senderBank: banks[Math.floor(random() * banks.length)], receiverBank: banks[Math.floor(random() * banks.length)], newDevice: random() < (fraud ? .7 : .05), failedAttempts: fraud ? Math.floor(random() * 4) : (random() < .9 ? 0 : 1) };
+    const hour = fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 17);
+    const location = fraud && random() < .7 ? (random() < .55 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)]!;
+    const input = { amount, hour, location, type: types[Math.floor(random() * types.length)]!, senderBank: banks[Math.floor(random() * banks.length)]!, receiverBank: banks[Math.floor(random() * banks.length)]!, newDevice: random() < (fraud ? .7 : .05), failedAttempts: fraud ? Math.floor(random() * 4) : (random() < .9 ? 0 : 1) };
     return { id: `TXN${String(index + 1).padStart(7, "0")}`, ...input, fraud, ...scoreTransaction(input) };
   });
 }
@@ -62,7 +62,7 @@ export const modelMetrics = {
 export function generateSecurityLogs(scale = 500, seed = 42): SecurityLog[] {
   const random = seeded(seed); const base = Date.UTC(2026, 6, 16, 8, 30); const families: SecurityLog["family"][] = ["Login", "Session", "Authentication", "Request", "Service"]; const browsers = ["Chrome", "Firefox", "Safari", "Edge", "Mobile App"]; const services = ["UPI Transfer", "Bill Payment", "Recharge", "Money Request", "QR Payment", "Merchant Payment"]; const plans = ["Basic", "Premium", "Gold", "Enterprise"];
   return Array.from({ length: Math.min(5000, Math.max(100, scale)) * 5 }, (_, index) => {
-    const family = families[index % 5]; const suspicious = random() < .16; const critical = suspicious && random() < .42;
+    const family = families[index % 5]!; const suspicious = random() < .16; const critical = suspicious && random() < .42;
     let status = "normal", value = 1, detail = "Normal activity";
     if (family === "Login") { status = suspicious ? "failed" : "success"; value = suspicious ? 6 + Math.floor(random() * 8) : 1; detail = suspicious ? `${value} failed attempts from this source` : "Successful login"; }
     if (family === "Session") { value = suspicious ? (random() < .5 ? 1 : 181 + Math.floor(random() * 300)) : 5 + Math.floor(random() * 55); status = suspicious ? "abnormal" : "normal"; detail = `Session duration ${value} minutes`; }
@@ -70,7 +70,7 @@ export function generateSecurityLogs(scale = 500, seed = 42): SecurityLog[] {
     if (family === "Request") { status = critical ? "dos_attack" : suspicious ? "blank" : "normal"; value = critical ? 10000 + Math.floor(random() * 40000) : suspicious ? Math.floor(random() * 50) : 100 + Math.floor(random() * 4900); detail = `${status.replace("_", " ")} request · ${value} bytes`; }
     if (family === "Service") { status = critical ? "suspended" : suspicious ? "pending" : "active"; value = 1; detail = `${status} UPI service subscription`; }
     const severity: SecurityLog["severity"] = critical ? "critical" : suspicious ? "warning" : "info";
-    return { id: `LOG-${String(index + 1).padStart(5, "0")}`, family, timestamp: new Date(base + Math.floor(random() * 7 * 86400000)).toISOString(), source: `${1 + Math.floor(random() * 223)}.•••.${1 + Math.floor(random() * 254)}.${1 + Math.floor(random() * 254)}`, subject: family === "Session" ? `SES-••${String(index % 100).padStart(2, "0")}` : `USR-••${String(index % 100).padStart(2, "0")}`, status, value, detail, browser: family === "Login" ? browsers[Math.floor(random() * browsers.length)] : undefined, service: family === "Service" ? services[Math.floor(random() * services.length)] : undefined, plan: family === "Service" ? plans[Math.floor(random() * plans.length)] : undefined, severity };
+    return { id: `LOG-${String(index + 1).padStart(5, "0")}`, family, timestamp: new Date(base + Math.floor(random() * 7 * 86400000)).toISOString(), source: `${1 + Math.floor(random() * 223)}.•••.${1 + Math.floor(random() * 254)}.${1 + Math.floor(random() * 254)}`, subject: family === "Session" ? `SES-••${String(index % 100).padStart(2, "0")}` : `USR-••${String(index % 100).padStart(2, "0")}`, status, value, detail, browser: family === "Login" ? browsers[Math.floor(random() * browsers.length)]! : undefined, service: family === "Service" ? services[Math.floor(random() * services.length)]! : undefined, plan: family === "Service" ? plans[Math.floor(random() * plans.length)]! : undefined, severity };
   }).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 }
 
@@ -96,9 +96,9 @@ export function forecastSeries(values: number[], horizon: number, acceleration =
   const xs = values.map((_, index) => index);
   if (!acceleration) {
     const xm = xs.reduce((a, b) => a + b, 0) / n; const ym = values.reduce((a, b) => a + b, 0) / n;
-    const slope = xs.reduce((sum, x, i) => sum + (x - xm) * (values[i] - ym), 0) / xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
+    const slope = xs.reduce((sum, x, i) => sum + (x - xm) * (values[i]! - ym), 0) / xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
     const intercept = ym - slope * xm; const fitted = xs.map((x) => intercept + slope * x);
-    const residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]) ** 2, 0) / (n - 2));
+    const residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]!) ** 2, 0) / (n - 2));
     const sxx = xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
     return Array.from({ length: horizon }, (_, i) => { const xf = n + i; const pi = residual * Math.sqrt(1 + 1 / n + (xf - xm) ** 2 / sxx); const value = Math.max(0, intercept + slope * xf); return { value, low: Math.max(0, value - 1.96 * pi), high: value + 1.96 * pi }; });
   }
@@ -108,6 +108,6 @@ export function forecastSeries(values: number[], horizon: number, acceleration =
 }
 
 export function toCsv(rows: Record<string, unknown>[]) {
-  if (!rows.length) return ""; const headers = Object.keys(rows[0]); const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  if (!rows.length) return ""; const headers = Object.keys(rows[0]!); const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`;
   return [headers.join(","), ...rows.map((row) => headers.map((header) => quote(row[header])).join(","))].join("\n");
 }

@@ -34,7 +34,7 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
     draw(); const observer = new ResizeObserver(draw); observer.observe(element); return () => observer.disconnect();
   }, [data, secondary]);
   const last = data.at(-1);
-  const points = data.length && last ? `${data[0].label}: ${formatter(data[0].value)} to ${last.label}: ${formatter(last.value)}` : "No data";
+  const points = data.length && last ? `${data[0]!.label}: ${formatter(data[0]!.value)} to ${last.label}: ${formatter(last.value)}` : "No data";
   return <div className="trend-chart" role="img" aria-label={`Trend chart. ${points}`}><canvas ref={canvas} /><div className="chart-axis"><span>{data[0]?.label}</span><span>{data[Math.floor(data.length / 2)]?.label}</span><span>{data.at(-1)?.label}</span></div>{secondary && <div className="chart-legend"><span><i className="solid" /> Primary</span><span><i className="dashed" /> Comparison</span></div>}</div>;
 }
 
