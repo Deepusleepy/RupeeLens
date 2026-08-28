@@ -28,10 +28,11 @@ function seeded(seed: number) {
 }
 
 export function scoreTransaction(input: Omit<Transaction, "id" | "fraud" | "rfScore" | "xgbScore" | "score" | "risk">) {
+  const failedAttempts = Math.max(0, input.failedAttempts);
   const night = input.hour < 6 || input.hour >= 22;
   const unknown = input.location === "Unknown" || input.location === "Foreign";
-  const rf = 4 + (input.amount > 25000 ? 20 : input.amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, input.failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
-  const xgb = 3 + (input.amount > 50000 ? 28 : input.amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, input.failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
+  const rf = 4 + (input.amount > 25000 ? 20 : input.amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
+  const xgb = 3 + (input.amount > 50000 ? 28 : input.amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
   const rfScore = Math.min(99, rf); const xgbScore = Math.min(99, xgb); const score = Math.round((rfScore + xgbScore) / 2);
   return { rfScore, xgbScore, score, risk: (score >= 60 ? "HIGH" : score >= 30 ? "MEDIUM" : "LOW") as Transaction["risk"] };
 }
@@ -91,7 +92,8 @@ export const budgetRows: BudgetRow[] = budgetHistory.map((row) => {
 });
 
 export function forecastSeries(values: number[], horizon: number, polynomial = false) {
-  const xs = values.map((_, index) => index); const n = values.length;
+  const n = values.length; const minLen = polynomial ? 3 : 2; if (n < minLen) { const last = values.at(-1) ?? 0; return Array.from({ length: horizon }, () => ({ value: last, low: last, high: last })); }
+  const xs = values.map((_, index) => index);
   if (!polynomial) {
     const xm = xs.reduce((a, b) => a + b, 0) / n; const ym = values.reduce((a, b) => a + b, 0) / n;
     const slope = xs.reduce((sum, x, i) => sum + (x - xm) * (values[i] - ym), 0) / xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);

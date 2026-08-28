@@ -39,6 +39,7 @@
 .lab-bars span { overflow: hidden; color: var(--text); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .lab-bars i { height: 8px; background: var(--surface-muted); }
 .lab-bars i b { display: block; height: 100%; background: var(--green); }
+.lab-bars i b.negative { background: var(--rust); }
 .lab-bars > div:nth-child(3n+2) i b { background: var(--gold); }
 .lab-bars > div:nth-child(3n) i b { background: var(--blue); }
 .lab-bars strong { text-align: right; font: 600 9px/1 var(--font-mono), monospace; }
