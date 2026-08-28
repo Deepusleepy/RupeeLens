@@ -14,8 +14,6 @@
 /coverage
 
 # next.js
-/.next/
-/.vinext/
 /out/
 
 # misc
@@ -37,8 +35,4 @@ yarn-error.log*
 # typescript
 next-env.d.ts
 *.tsbuildinfo
-/dist/
 /pages-dist/
-/.wrangler/
-/outputs/
-/work/
