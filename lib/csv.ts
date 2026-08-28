@@ -1,4 +1,5 @@
 export function parseCsv(text: string): string[][] {
+  if (text === "") return [];
   const rows: string[][] = [];
   let row: string[] = [];
   let field = "";
@@ -21,7 +22,7 @@ export function parseCsv(text: string): string[][] {
 }
 
 export function parseCsvWithHeaders(text: string): { headers: string[]; rows: Record<string, string>[] } {
-  const all = parseCsv(text.trim());
+  const all = parseCsv(text.replace(/^\uFEFF/, "").trim());
   if (!all.length) return { headers: [], rows: [] };
   const [headers, ...data] = all;
   return { headers, rows: data.map((values) => Object.fromEntries(headers.map((header, i) => [header, values[i] ?? ""]))) };
