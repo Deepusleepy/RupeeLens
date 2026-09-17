@@ -13,9 +13,6 @@
 # testing
 /coverage
 
-# next.js
-/out/
-
 # misc
 .DS_Store
 *.pem
@@ -33,7 +30,6 @@ yarn-error.log*
 .vercel
 
 # typescript
-next-env.d.ts
 *.tsbuildinfo
 
 # build artifacts
