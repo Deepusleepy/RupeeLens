@@ -3,7 +3,7 @@ import { budgetHistory } from "./data";
 export type Transaction = {
   id: string; amount: number; hour: number; location: string; type: string;
   senderBank: string; receiverBank: string; newDevice: boolean; failedAttempts: number;
-  fraud: boolean; rfScore: number; xgbScore: number; score: number; risk: "LOW" | "MEDIUM" | "HIGH";
+  fraud: boolean; logisticScore: number; forestScore: number; score: number; risk: "LOW" | "MEDIUM" | "HIGH";
 };
 
 export type SecurityLog = {
@@ -27,16 +27,16 @@ function seeded(seed: number) {
   return () => ((value = Math.imul(1664525, value) + 1013904223 >>> 0) / 4294967296);
 }
 
-export function scoreTransaction(input: Omit<Transaction, "id" | "fraud" | "rfScore" | "xgbScore" | "score" | "risk">) {
+export function scoreTransaction(input: Omit<Transaction, "id" | "fraud" | "logisticScore" | "forestScore" | "score" | "risk">) {
   const amount = Math.max(0, Number.isFinite(input.amount) ? input.amount : 0);
   const hour = Math.max(0, Math.min(23, Number.isFinite(input.hour) ? input.hour : 12));
   const failedAttempts = Math.max(0, Math.floor(Number.isFinite(input.failedAttempts) ? input.failedAttempts : 0));
   const night = hour < 6 || hour >= 22;
   const unknown = input.location === "Unknown" || input.location === "Foreign";
-  const rf = 4 + (amount > 25000 ? 20 : amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
-  const xgb = 3 + (amount > 50000 ? 28 : amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
-  const rfScore = Math.min(99, rf); const xgbScore = Math.min(99, xgb); const score = Math.round((rfScore + xgbScore) / 2);
-  return { rfScore, xgbScore, score, risk: (score >= 60 ? "HIGH" : score >= 30 ? "MEDIUM" : "LOW") as Transaction["risk"] };
+  const logistic = 4 + (amount > 25000 ? 20 : amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
+  const forest = 3 + (amount > 50000 ? 28 : amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
+  const logisticScore = Math.min(99, logistic); const forestScore = Math.min(99, forest); const score = Math.round((logisticScore + forestScore) / 2);
+  return { logisticScore, forestScore, score, risk: (score >= 60 ? "HIGH" : score >= 30 ? "MEDIUM" : "LOW") as Transaction["risk"] };
 }
 
 export function generateTransactions(count = 1000, fraudPercent = 10, seed = 42): Transaction[] {
@@ -44,23 +44,15 @@ export function generateTransactions(count = 1000, fraudPercent = 10, seed = 42)
   const fp = Math.max(0, Math.min(100, Number.isFinite(fraudPercent) ? fraudPercent : 10));
   return Array.from({ length: Math.min(50000, Math.max(100, count)) }, (_, index) => {
     const fraud = random() < fp / 100;
-    const amount = Math.round((fraud ? 500 + Math.pow(random(), .35) * 199500 : 10 + Math.pow(random(), 2.4) * 49990) * 100) / 100;
-    const hour = fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 16);
-    const location = fraud && random() < .7 ? (random() < .55 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)]!;
-    const input = { amount, hour, location, type: types[Math.floor(random() * types.length)]!, senderBank: banks[Math.floor(random() * banks.length)]!, receiverBank: banks[Math.floor(random() * banks.length)]!, newDevice: random() < (fraud ? .7 : .05), failedAttempts: fraud ? Math.floor(random() * 4) : (random() < .9 ? 0 : 1) };
-    return { id: `TXN${String(index + 1).padStart(7, "0")}`, ...input, fraud, ...scoreTransaction(input) };
+    const normalFraud = fraud && random() < 0.18;
+    const suspiciousLegit = !fraud && random() < 0.08;
+    const amount = Math.round((normalFraud ? 10 + Math.pow(random(), 2.4) * 49990 : suspiciousLegit ? 5000 + random() * 45000 : fraud ? 500 + Math.pow(random(), .35) * 199500 : 10 + Math.pow(random(), 2.4) * 49990) * 100) / 100;
+    const hour = normalFraud ? 6 + Math.floor(random() * 17) : suspiciousLegit ? (random() < 0.5 ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 17)) : fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 16);
+    const location = normalFraud ? locations[Math.floor(random() * locations.length)]! : suspiciousLegit ? (random() < 0.4 ? (random() < 0.5 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)]!) : fraud && random() < .7 ? (random() < .55 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)]!;
+    const input = { amount, hour, location, type: types[Math.floor(random() * types.length)]!, senderBank: banks[Math.floor(random() * banks.length)]!, receiverBank: banks[Math.floor(random() * banks.length)]!, newDevice: normalFraud ? false : suspiciousLegit ? random() < 0.5 : random() < (fraud ? .7 : .05), failedAttempts: normalFraud ? 0 : suspiciousLegit ? Math.floor(random() * 3) : fraud ? Math.floor(random() * 4) : (random() < .9 ? 0 : 1) };
+    return { id: `TXN${String(index + 1).padStart(7, "0")}`, ...input, fraud, logisticScore: 0, forestScore: 0, score: 0, risk: "LOW" as Transaction["risk"] };
   });
 }
-
-export const featureImportance = [
-  ["New device", 23], ["Unknown location", 19], ["Failed attempts", 17], ["Transaction amount", 15],
-  ["Hour of day", 11], ["Transaction type", 7], ["Sender bank", 5], ["Receiver bank", 3],
-] as const;
-
-export const modelMetrics = {
-  rf: { accuracy: 94.1, precision: 89.4, recall: 87.1, f1: 88.2, auc: 95.7, matrix: [[1734, 38], [52, 176]] },
-  xgb: { accuracy: 95.3, precision: 91.7, recall: 89.5, f1: 90.6, auc: 97.1, matrix: [[1745, 27], [43, 185]] },
-};
 
 export function generateSecurityLogs(scale = 500, seed = 42): SecurityLog[] {
   const random = seeded(seed); const base = Date.UTC(2026, 6, 16, 8, 30); const families: SecurityLog["family"][] = ["Login", "Session", "Authentication", "Request", "Service"]; const browsers = ["Chrome", "Firefox", "Safari", "Edge", "Mobile App"]; const services = ["UPI Transfer", "Bill Payment", "Recharge", "Money Request", "QR Payment", "Merchant Payment"]; const plans = ["Basic", "Premium", "Gold", "Enterprise"];
