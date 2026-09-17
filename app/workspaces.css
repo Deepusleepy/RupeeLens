@@ -18,7 +18,7 @@
 .lab-toolbar .search-field input:not([type="checkbox"]):not([type="range"]) { min-width: 0; width: 100%; height: auto; margin: 0; padding: 0; border: 0; outline: 0; }
 .lab-toolbar .check-label { min-height: 39px; display: flex; align-items: center; gap: 8px; color: var(--text); }
 .check-label input { accent-color: var(--green); }
-.switch-label { gap: 10px; cursor: pointer; user-select: none; }
+.switch-label { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
 .switch-label input { position: absolute; opacity: 0; pointer-events: none; }
 .switch { width: 34px; height: 19px; flex: none; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-muted); position: relative; transition: background-color .2s ease, border-color .2s ease; }
 .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--muted); transition: transform .2s ease, background-color .2s ease; }
@@ -35,8 +35,7 @@
 .lab-grid.two { grid-template-columns: 1fr 1fr; }
 .span-two { grid-column: 1 / -1; }
 .lab-card { padding: 25px; border: 1px solid var(--ink); background: var(--surface); }
-.lab-card { transition: box-shadow .2s ease, transform .2s ease; }
-.lab-card:hover { box-shadow: 4px 4px 0 var(--line); }
+
 .lab-card > h2 { margin: 0 0 22px; font: 500 24px/1.15 Georgia, serif; }
 .lab-card h3 { margin: 28px 0 15px; font: 500 17px/1 Georgia, serif; }
 .lab-card-head { margin-bottom: 22px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
@@ -134,7 +133,7 @@
 .heatmap span.heat-up { background: var(--heat-up); color: var(--heat-up-text); }
 .heatmap span.heat-down { background: var(--heat-down); color: var(--heat-down-text); }
 .heatmap span.heat-flat { background: var(--surface-muted); color: var(--text); }
-.comparison-picker { margin-bottom: 14px; padding: 15px; display: flex; flex-wrap: wrap; gap: 8px; border: 1px solid var(--ink); background: var(--surface); }.comparison-picker .chip { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text); font-size: 11px; cursor: pointer; transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease; }.comparison-picker .chip:hover { border-color: var(--green); color: var(--green); transform: translateY(-1px); }.comparison-picker .chip.active { background: var(--green); border-color: var(--green); color: white; }.comparison-picker label { color: var(--text); font-size: 11px; }.comparison-picker input { accent-color: var(--green); }
+.comparison-picker { margin-bottom: 14px; padding: 15px; display: flex; flex-wrap: wrap; gap: 8px; border: 1px solid var(--ink); background: var(--surface); }.comparison-picker .chip { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text); font-size: 11px; cursor: pointer; transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease; }.comparison-picker .chip:hover { border-color: var(--green); color: var(--green); transform: translateY(-1px); }.comparison-picker .chip.active { background: var(--green); border-color: var(--green); color: white; }
 .query-presets { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 7px; }.query-presets button { padding: 8px 10px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 11px; cursor: pointer; }
 .smart-query { margin-bottom: 14px; padding: 13px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--ink); background: var(--surface); }.smart-query input { flex: 1; height: 42px; padding: 0 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 11px; }.source-link { margin-top: 18px; display: inline-block; color: var(--green); font-size: 11px; }
 
