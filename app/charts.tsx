@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 export type ChartDatum = { label: string; value: number };
 
-const palette = ["var(--green)", "var(--gold)", "var(--blue)", "var(--rust)", "#7f8f6a", "#674c78", "#8b7252", "#477b78"];
+const palette = ["var(--green)", "var(--gold)", "var(--blue)", "var(--rust)", "var(--chart-5)", "var(--chart-6)", "var(--chart-7)", "var(--chart-8)"];
 
 export function TrendChart({ data, secondary, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; secondary?: ChartDatum[]; formatter?: (value: number) => string }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -32,7 +32,7 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
       for (let i = 0; i < 4; i++) { const gy = 14 + i * 68; context.beginPath(); context.moveTo(0, gy); context.lineTo(width, gy); context.stroke(); }
       const plot = (series: ChartDatum[], color: string, dashed = false, fill = false) => {
         context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value)));
-        if (fill && series.length) { context.lineTo(x(series.length - 1, series.length), 220); context.lineTo(x(0, series.length), 220); context.closePath(); context.fillStyle = `${green}1a`; context.fill(); context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value))); }
+        if (fill && series.length) { context.lineTo(x(series.length - 1, series.length), 220); context.lineTo(x(0, series.length), 220); context.closePath(); context.globalAlpha = 0.1; context.fillStyle = green; context.fill(); context.globalAlpha = 1; context.beginPath(); series.forEach((item, index) => index ? context.lineTo(x(index, series.length), y(item.value)) : context.moveTo(x(index, series.length), y(item.value))); }
         context.setLineDash(dashed ? [7, 6] : []); context.strokeStyle = color; context.lineWidth = 2.5; context.stroke(); context.setLineDash([]);
         if (!dashed) series.forEach((item, index) => { context.beginPath(); context.arc(x(index, series.length), y(item.value), 3.2, 0, Math.PI * 2); context.fillStyle = color; context.fill(); });
       };
@@ -46,20 +46,21 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
 }
 
 export function DonutChart({ data, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; formatter?: (value: number) => string }) {
-  const total = data.reduce((sum, item) => sum + Math.max(0, item.value), 0) || 1;
+  const isEmpty = data.every((d) => !d.value);
+  const total = isEmpty ? 0 : data.reduce((sum, item) => sum + Math.max(0, item.value), 0) || 1;
   const gradient = data.reduce<{ cursor: number; stops: string[] }>((result, item, index) => {
     const next = result.cursor + Math.max(0, item.value) / total * 100;
     return { cursor: next, stops: [...result.stops, `${palette[index % palette.length]} ${result.cursor}% ${next}%`] };
   }, { cursor: 0, stops: [] }).stops.join(", ");
-  return <div className="donut-layout"><div className="donut" style={{ background: `conic-gradient(${gradient})` }} role="img" aria-label={data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}><span><strong>{formatter(total)}</strong><small>Total</small></span></div><div className="donut-legend">{data.map((item, index) => <div key={item.label}><i style={{ background: palette[index % palette.length] }} /><span>{item.label}</span><strong>{formatter(item.value)}</strong></div>)}</div></div>;
+  return <div className="donut-layout"><div className="donut" style={{ background: `conic-gradient(${gradient})` }} role="img" aria-label={!data.length ? "Chart has no data" : data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}><span><strong>{isEmpty ? "0" : formatter(total)}</strong><small>Total</small></span></div><div className="donut-legend">{data.map((item, index) => <div key={item.label}><i style={{ background: palette[index % palette.length] }} /><span>{item.label}</span><strong>{formatter(item.value)}</strong></div>)}</div></div>;
 }
 
 export function Histogram({ data, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; formatter?: (value: number) => string }) {
   const max = Math.max(...data.map((item) => item.value), 1);
-  return <div className="histogram" role="img" aria-label={data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}>{data.map((item, index) => <div key={item.label}><strong>{formatter(item.value)}</strong><i style={{ height: `${Math.max(3, item.value / max * 100)}%`, background: palette[index % 4] }} /><span>{item.label}</span></div>)}</div>;
+  return <div className="histogram" role="img" aria-label={!data.length ? "Chart has no data" : data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}>{data.map((item, index) => <div key={item.label}><strong>{formatter(item.value)}</strong><i style={{ height: `${Math.max(3, item.value / max * 100)}%`, background: palette[index % palette.length] }} /><span>{item.label}</span></div>)}</div>;
 }
 
 export function DotPlot({ data, formatter = (value) => value.toLocaleString("en-IN") }: { data: ChartDatum[]; formatter?: (value: number) => string }) {
   const max = Math.max(...data.map((item) => item.value), 1);
-  return <div className="dot-plot" role="img" aria-label={data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}>{data.map((item, index) => <div key={item.label}><span>{item.label}</span><i><b style={{ left: `${item.value / max * 100}%`, background: palette[index % palette.length] }} /></i><strong>{formatter(item.value)}</strong></div>)}</div>;
+  return <div className="dot-plot" role="img" aria-label={!data.length ? "Chart has no data" : data.map((item) => `${item.label} ${formatter(item.value)}`).join(", ")}>{data.map((item, index) => <div key={item.label}><span>{item.label}</span><i><b style={{ left: `${item.value / max * 100}%`, background: palette[index % palette.length] }} /></i><strong>{formatter(item.value)}</strong></div>)}</div>;
 }

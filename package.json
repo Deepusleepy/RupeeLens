@@ -15,7 +15,7 @@
     "build": "vite build --config vite.pages.config.ts",
     "build:pages": "npm run build",
     "test": "npm run test:unit",
-    "test:unit": "node --import tsx --test tests/labs.test.ts tests/workspaces.test.ts tests/budget-data.test.ts tests/csv-parser.test.ts tests/forecast-query.test.ts tests/data-logic.test.ts tests/data-hardening.test.ts tests/security-anomalies.test.ts tests/generators.test.ts tests/score-transaction.test.ts tests/tocsv.test.ts tests/csv-edges.test.ts tests/forecast-edges.test.ts tests/models.test.ts tests/accessibility.test.ts tests/code-quality.test.ts tests/ux-remaining.test.ts",
+    "test:unit": "node --import tsx --test tests/labs.test.ts tests/workspaces.test.ts tests/budget-data.test.ts tests/csv-parser.test.ts tests/forecast-query.test.ts tests/data-logic.test.ts tests/data-hardening.test.ts tests/security-anomalies.test.ts tests/generators.test.ts tests/score-transaction.test.ts tests/tocsv.test.ts tests/csv-edges.test.ts tests/forecast-edges.test.ts tests/models.test.ts tests/accessibility.test.ts tests/code-quality.test.ts tests/ux-remaining.test.ts tests/css-ux.test.ts",
     "test:integration": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
