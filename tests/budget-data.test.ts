@@ -7,9 +7,9 @@ test("Finance series has no >100x jumps between consecutive years", async () => 
   const source = await readFile(new URL("../lib/data.ts", import.meta.url), "utf8");
   const match = source.match(/Finance:\s*\[([^\]]+)\]/);
   assert.ok(match, "Finance series not found in lib/data.ts");
-  const values = match[1].split(",").map((v) => Number(v.trim()));
+  const values = match[1]!.split(",").map((v) => Number(v.trim()));
   for (let i = 1; i < values.length; i++) {
-    const ratio = Math.max(values[i], values[i - 1]) / Math.min(values[i], values[i - 1]);
+    const ratio = Math.max(values[i]!, values[i - 1]!) / Math.min(values[i]!, values[i - 1]!);
     assert.ok(ratio <= 100, `Finance jump at index ${i}: ${values[i - 1]} -> ${values[i]} (ratio ${ratio.toFixed(2)})`);
   }
 });
@@ -18,7 +18,7 @@ test("Defence series first three values are not all identical", async () => {
   const source = await readFile(new URL("../lib/data.ts", import.meta.url), "utf8");
   const match = source.match(/Defence:\s*\[([^\]]+)\]/);
   assert.ok(match, "Defence series not found in lib/data.ts");
-  const values = match[1].split(",").map((v) => Number(v.trim()));
+  const values = match[1]!.split(",").map((v) => Number(v.trim()));
   assert.ok(values[0] !== values[1] || values[1] !== values[2], "Defence first three values are all identical");
 });
 
