@@ -118,7 +118,6 @@ html { background: var(--paper); scroll-behavior: smooth; scrollbar-gutter: stab
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-geist), Arial, sans-serif; transition: background-color .25s ease, color .25s ease; }
 .view-page, .lab-page, .hero { animation: page-in .35s ease both; }
 @keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 button, .lab-card-head button, .text-action, .upload-zone button, .workspace-tabs button, .compact-table tbody tr, .export-grid button, .desktop-nav button { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
 button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
