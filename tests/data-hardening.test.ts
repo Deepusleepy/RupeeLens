@@ -15,8 +15,8 @@ const baseInput = {
 test("scoreTransaction with NaN amount returns finite score", () => {
   const result = scoreTransaction({ ...baseInput, amount: NaN });
   assert.ok(isFiniteNumber(result.score));
-  assert.ok(isFiniteNumber(result.rfScore));
-  assert.ok(isFiniteNumber(result.xgbScore));
+  assert.ok(isFiniteNumber(result.logisticScore));
+  assert.ok(isFiniteNumber(result.forestScore));
 });
 
 test("scoreTransaction with NaN hour returns finite score", () => {
@@ -85,7 +85,7 @@ test("toCsv escapes newlines in values to spaces", () => {
 
 test("toCsv with heterogeneous rows includes all keys as headers", () => {
   const csv = toCsv([{ a: 1 }, { b: 2 }]);
-  const headerLine = csv.split("\n")[0];
+  const headerLine = csv.split("\n")[0]!;
   assert.ok(headerLine.includes("a"));
   assert.ok(headerLine.includes("b"));
 });

@@ -10,9 +10,9 @@ test("encodeFeatures returns Float64Array of FEATURE_DIM with correct one-hot", 
   assert.equal(features[3], 1, "Mumbai one-hot at index 3");
   assert.equal(features[13], 1, "P2P one-hot at index 13");
   assert.equal(features[18], 1, "SBI one-hot at index 18");
-  assert.equal(features[26], 1, "HDFC one-hot at index 26");
-  assert.equal(features[32], 1, "newDevice at index 32");
-  assert.ok(features[0] > 0, "amount log-normalized > 0");
+  assert.equal(features[26]!, 1, "HDFC one-hot at index 26");
+  assert.equal(features[32]!, 1, "newDevice at index 32");
+  assert.ok(features[0]! > 0, "amount log-normalized > 0");
 });
 
 test("logistic regression converges (loss decreases)", () => {
@@ -27,7 +27,7 @@ test("logistic regression converges (loss decreases)", () => {
   const labels = Array.from({ length: 200 }, (_, i) => (i < 100 ? 0 : 1));
   const model = trainLogistic(features, labels, 0.5, 100);
   assert.ok(model.lossHistory.length >= 2);
-  assert.ok(model.lossHistory[model.lossHistory.length - 1] < model.lossHistory[0], "final loss should be less than initial");
+  assert.ok(model.lossHistory[model.lossHistory.length - 1]! < model.lossHistory[0]!, "final loss should be less than initial");
 });
 
 test("decision tree splits on correct feature", () => {
@@ -38,10 +38,10 @@ test("decision tree splits on correct feature", () => {
     f[2] = i;
     return f;
   });
-  const labels = features.map((f) => (f[0] > 0.5 ? 1 : 0));
+  const labels = features.map((f) => (f[0]! > 0.5 ? 1 : 0));
   const forest = trainForest(features, labels, 42, 1, 1, 1, 2);
-  assert.ok(forest.importance[0] > 0, "feature 0 should have importance");
-  assert.ok(forest.importance[0] > forest.importance[1], "feature 0 more important than feature 1");
+  assert.ok(forest.importance[0]! > 0, "feature 0 should have importance");
+  assert.ok(forest.importance[0]! > forest.importance[1]!, "feature 0 more important than feature 1");
 });
 
 test("computeMetrics matches manual calc on 10-row set", () => {
@@ -97,6 +97,6 @@ test("scoreWithModels updates transaction scores", () => {
     assert.ok(Number.isFinite(t.score));
     assert.ok(["LOW", "MEDIUM", "HIGH"].includes(t.risk));
   }
-  const changed = scored.filter((t, i) => t.score !== txns[i].score);
+  const changed = scored.filter((t, i) => t.score !== txns[i]!.score);
   assert.ok(changed.length > 0, "at least some scores should change from 0");
 });

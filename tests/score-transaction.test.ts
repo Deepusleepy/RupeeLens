@@ -43,7 +43,7 @@ test("rfScore and xgbScore differ for amount=30000 (RF threshold 25000, XGB thre
     newDevice: false,
     failedAttempts: 0,
   });
-  assert.ok(result.rfScore > result.xgbScore, `rfScore ${result.rfScore} should exceed xgbScore ${result.xgbScore}`);
+  assert.ok(result.logisticScore > result.forestScore, `logisticScore ${result.logisticScore} should exceed forestScore ${result.forestScore}`);
 });
 
 test("score clamping: construct input producing > 99 → score is 99", () => {
@@ -57,8 +57,8 @@ test("score clamping: construct input producing > 99 → score is 99", () => {
     newDevice: true,
     failedAttempts: 20,
   });
-  assert.equal(result.rfScore, 99);
-  assert.equal(result.xgbScore, 99);
+  assert.equal(result.logisticScore, 99);
+  assert.equal(result.forestScore, 99);
 });
 
 test("risk bands: score 59 → MEDIUM", () => {
@@ -102,8 +102,8 @@ test("failedAttempts=10 → RF adds min(18,60)=18, XGB adds min(20,70)=20", () =
     newDevice: false,
     failedAttempts: 10,
   });
-  assert.equal(withAttempts.rfScore - base.rfScore, 18);
-  assert.equal(withAttempts.xgbScore - base.xgbScore, 20);
+  assert.equal(withAttempts.logisticScore - base.logisticScore, 18);
+  assert.equal(withAttempts.forestScore - base.forestScore, 20);
 });
 
 function securityAnomalyScoreBand(score: number): string {

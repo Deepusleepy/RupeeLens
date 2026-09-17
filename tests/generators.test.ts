@@ -32,8 +32,8 @@ test("every transaction has valid score/rfScore/xgbScore in [0, 99]", () => {
   const result = generateTransactions(500, 10, 42);
   for (const t of result) {
     assert.ok(t.score >= 0 && t.score <= 99, `score ${t.score} out of range`);
-    assert.ok(t.rfScore >= 0 && t.rfScore <= 99, `rfScore ${t.rfScore} out of range`);
-    assert.ok(t.xgbScore >= 0 && t.xgbScore <= 99, `xgbScore ${t.xgbScore} out of range`);
+    assert.ok(t.logisticScore >= 0 && t.logisticScore <= 99, `logisticScore ${t.logisticScore} out of range`);
+    assert.ok(t.forestScore >= 0 && t.forestScore <= 99, `forestScore ${t.forestScore} out of range`);
   }
 });
 
