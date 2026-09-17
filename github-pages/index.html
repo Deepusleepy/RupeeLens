@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Explore synthetic UPI risk, security logs, and Indian Union Budget data." />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/RupeeLens/favicon.svg" />
     <title>RupeeLens | Payment risk and public finance</title>
     <style>
@@ -12,6 +13,16 @@
         --font-mono: "SFMono-Regular", Consolas, monospace;
       }
     </style>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("rupeelens-theme");
+          var theme = saved === "dark" || saved === "light" ? saved : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.background = theme === "dark" ? "#000" : "#f4f1e8";
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
