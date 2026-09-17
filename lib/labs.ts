@@ -104,7 +104,7 @@ export function forecastSeries(values: number[], horizon: number, acceleration =
   return Array.from({ length: horizon }, (_, i) => { const step = i + 1; const value = Math.max(0, values.at(-1)! + d1 * step + accel * step * step); return { value, low: Math.max(0, value - 1.96 * residual * Math.sqrt(step)), high: value + 1.96 * residual * Math.sqrt(step) }; });
 }
 
-export function toCsv(rows: Record<string, unknown>[]) {
-  if (!rows.length) return ""; const headers = [...new Set(rows.flatMap((r) => Object.keys(r)))]; const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""').replaceAll(/\r?\n/g, " ")}"`;
-  return [headers.join(","), ...rows.map((row) => headers.map((header) => quote(row[header])).join(","))].join("\n");
+export function toCsv<T extends object>(rows: T[]) {
+  if (!rows.length) return ""; const headers = [...new Set(rows.flatMap((row) => Object.keys(row)))]; const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""').replaceAll(/\r?\n/g, " ")}"`;
+  return [headers.join(","), ...rows.map((row) => headers.map((header) => quote((row as Record<string, unknown>)[header])).join(","))].join("\n");
 }

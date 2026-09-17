@@ -1,15 +1,15 @@
-.dual-links { display: flex; gap: 24px; }
+.dual-links { display: flex; gap: var(--space-xl); }
 .lab-page { max-width: 1320px; }
 .workspace-tabs { margin-bottom: 18px; display: flex; overflow-x: auto; border: 1px solid var(--ink); background: var(--surface); }
 .workspace-tabs button { min-height: 54px; padding: 0 20px; border: 0; border-right: 1px solid var(--line); border-bottom: 3px solid transparent; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; white-space: nowrap; }
 .workspace-tabs button:hover { background: var(--surface-muted); }
 .workspace-tabs button.active { border-bottom-color: var(--green); color: var(--green); font-weight: 700; }
-.lab-toolbar { min-height: 70px; margin-bottom: 14px; padding: 13px; display: flex; align-items: end; gap: 12px; border: 1px solid var(--ink); background: var(--surface); }
+.lab-toolbar { min-height: 70px; margin-bottom: 14px; padding: 13px; display: flex; align-items: end; gap: var(--space-md); border: 1px solid var(--ink); background: var(--surface); }
 .lab-toolbar label { color: var(--muted); font-size: 11px; }
 .lab-toolbar input:not([type="checkbox"]):not([type="range"]), .lab-toolbar select { min-width: 125px; height: 39px; margin-top: 7px; padding: 0 10px; display: block; border: 1px solid #aaa99f; background: white; color: var(--ink); font-size: 11px; }
 .lab-toolbar input[type="range"] { min-width: 180px; margin: 13px 8px 0 0; vertical-align: middle; accent-color: var(--green); }
 .lab-toolbar label > span { color: var(--ink); }
-.lab-primary { min-height: 40px; padding: 0 15px; border: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); color: white; font-size: 11px; cursor: pointer; }
+.lab-primary { min-height: 40px; padding: 0 15px; border: 0; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); background: var(--green); color: white; font-size: 11px; cursor: pointer; }
 .lab-primary:hover { background: #104b30; }
 .lab-primary input { display: none; }
 .seed-display { margin-left: 10px; color: var(--muted); font-size: 11px; }

@@ -65,9 +65,10 @@ npm run lint
 npm run typecheck
 npm run test:unit
 npm test
+npm run test:integration
 ```
 
-`npm test` builds the pages bundle and runs the HTML tests.
+`npm test` runs the fast unit tests. `npm run test:integration` builds the pages bundle and runs the HTML tests.
 
 ## Project status
 
