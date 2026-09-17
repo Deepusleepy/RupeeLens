@@ -42,9 +42,19 @@ function Shell({ active, setActive, children }: { active: View; setActive: (view
   }, [menuOpen]);
   useEffect(() => {
     if (!menuOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setMenuOpen(false); return; }
+      if (e.key !== "Tab" || !overlayRef.current) return;
+      const focusable = overlayRef.current.querySelectorAll<HTMLElement>("button");
+      if (!focusable.length) return;
+      const first = focusable[0]!; const last = focusable[focusable.length - 1]!;
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKeyDown); document.body.style.overflow = previousOverflow; };
   }, [menuOpen]);
   return <div className="site-shell"><a href="#main" className="skip-link">Skip to content</a><header className="masthead"><Wordmark /><nav className="desktop-nav" aria-label="Primary navigation">{views.map((view) => <button key={view.id} className={active === view.id ? "active" : ""} aria-current={active === view.id ? "page" : undefined} onClick={() => setActive(view.id)}>{view.label}</button>)}</nav><div className="mast-actions"><span className="privacy-stamp"><ShieldCheck size={14} /> Synthetic payment data</span><button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme" aria-pressed={theme === "dark"}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button><button ref={triggerRef} className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation" aria-expanded={menuOpen}><Menu size={20} /></button></div></header>{menuOpen && <div ref={overlayRef} className="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation" onClick={(e) => { if (e.target === overlayRef.current) setMenuOpen(false); }}><button className="close-menu" onClick={() => setMenuOpen(false)} aria-label="Close navigation"><X size={22} /></button><Wordmark /><nav>{views.map((view) => <button key={view.id} aria-current={active === view.id ? "page" : undefined} onClick={() => { setActive(view.id); setMenuOpen(false); }}>{view.label}</button>)}</nav></div>}<main id="main">{children}</main><footer className="site-footer"><Wordmark /><p>Synthetic transaction and security data · Official budget source linked</p><a href="https://github.com/Deepusleepy/RupeeLens" target="_blank" rel="noreferrer"><Code2 size={15} /> View source <ExternalLink size={12} /></a></footer></div>;
 }
