@@ -28,21 +28,24 @@ function seeded(seed: number) {
 }
 
 export function scoreTransaction(input: Omit<Transaction, "id" | "fraud" | "rfScore" | "xgbScore" | "score" | "risk">) {
-  const failedAttempts = Math.max(0, input.failedAttempts);
-  const night = input.hour < 6 || input.hour >= 22;
+  const amount = Math.max(0, Number.isFinite(input.amount) ? input.amount : 0);
+  const hour = Math.max(0, Math.min(23, Number.isFinite(input.hour) ? input.hour : 12));
+  const failedAttempts = Math.max(0, Math.floor(Number.isFinite(input.failedAttempts) ? input.failedAttempts : 0));
+  const night = hour < 6 || hour >= 22;
   const unknown = input.location === "Unknown" || input.location === "Foreign";
-  const rf = 4 + (input.amount > 25000 ? 20 : input.amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
-  const xgb = 3 + (input.amount > 50000 ? 28 : input.amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
+  const rf = 4 + (amount > 25000 ? 20 : amount > 10000 ? 9 : 0) + (night ? 17 : 0) + (unknown ? 22 : 0) + (input.newDevice ? 25 : 0) + Math.min(18, failedAttempts * 6) + (input.senderBank !== input.receiverBank ? 4 : 0);
+  const xgb = 3 + (amount > 50000 ? 28 : amount > 15000 ? 13 : 0) + (night ? 20 : 0) + (unknown ? 26 : 0) + (input.newDevice ? 21 : 0) + Math.min(20, failedAttempts * 7) + (input.type === "P2P" ? 4 : 0);
   const rfScore = Math.min(99, rf); const xgbScore = Math.min(99, xgb); const score = Math.round((rfScore + xgbScore) / 2);
   return { rfScore, xgbScore, score, risk: (score >= 60 ? "HIGH" : score >= 30 ? "MEDIUM" : "LOW") as Transaction["risk"] };
 }
 
 export function generateTransactions(count = 1000, fraudPercent = 10, seed = 42): Transaction[] {
   const random = seeded(seed);
+  const fp = Math.max(0, Math.min(100, Number.isFinite(fraudPercent) ? fraudPercent : 10));
   return Array.from({ length: Math.min(50000, Math.max(100, count)) }, (_, index) => {
-    const fraud = random() < fraudPercent / 100;
+    const fraud = random() < fp / 100;
     const amount = Math.round((fraud ? 500 + Math.pow(random(), .35) * 199500 : 10 + Math.pow(random(), 2.4) * 49990) * 100) / 100;
-    const hour = fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 17);
+    const hour = fraud ? [0, 1, 2, 3, 4, 22, 23][Math.floor(random() * 7)]! : 6 + Math.floor(random() * 16);
     const location = fraud && random() < .7 ? (random() < .55 ? "Unknown" : "Foreign") : locations[Math.floor(random() * locations.length)]!;
     const input = { amount, hour, location, type: types[Math.floor(random() * types.length)]!, senderBank: banks[Math.floor(random() * banks.length)]!, receiverBank: banks[Math.floor(random() * banks.length)]!, newDevice: random() < (fraud ? .7 : .05), failedAttempts: fraud ? Math.floor(random() * 4) : (random() < .9 ? 0 : 1) };
     return { id: `TXN${String(index + 1).padStart(7, "0")}`, ...input, fraud, ...scoreTransaction(input) };
@@ -92,13 +95,15 @@ export const budgetRows: BudgetRow[] = budgetHistory.map((row) => {
 });
 
 export function forecastSeries(values: number[], horizon: number, acceleration = false) {
+  if (!values.every(Number.isFinite)) return Array.from({ length: Math.max(0, horizon) }, () => ({ value: 0, low: 0, high: 0 }));
   const n = values.length; const minLen = acceleration ? 3 : 2; if (n < minLen) { const last = values.at(-1) ?? 0; return Array.from({ length: horizon }, () => ({ value: last, low: last, high: last })); }
   const xs = values.map((_, index) => index);
   if (!acceleration) {
     const xm = xs.reduce((a, b) => a + b, 0) / n; const ym = values.reduce((a, b) => a + b, 0) / n;
     const slope = xs.reduce((sum, x, i) => sum + (x - xm) * (values[i]! - ym), 0) / xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
     const intercept = ym - slope * xm; const fitted = xs.map((x) => intercept + slope * x);
-    const residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]!) ** 2, 0) / (n - 2));
+    let residual = Math.sqrt(values.reduce((sum, y, i) => sum + (y - fitted[i]!) ** 2, 0) / (n - 2));
+    if (!Number.isFinite(residual) || residual === 0) residual = Math.abs(slope) || 1;
     const sxx = xs.reduce((sum, x) => sum + (x - xm) ** 2, 0);
     return Array.from({ length: horizon }, (_, i) => { const xf = n + i; const pi = residual * Math.sqrt(1 + 1 / n + (xf - xm) ** 2 / sxx); const value = Math.max(0, intercept + slope * xf); return { value, low: Math.max(0, value - 1.96 * pi), high: value + 1.96 * pi }; });
   }
@@ -108,6 +113,6 @@ export function forecastSeries(values: number[], horizon: number, acceleration =
 }
 
 export function toCsv(rows: Record<string, unknown>[]) {
-  if (!rows.length) return ""; const headers = Object.keys(rows[0]!); const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  if (!rows.length) return ""; const headers = [...new Set(rows.flatMap((r) => Object.keys(r)))]; const quote = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""').replaceAll(/\r?\n/g, " ")}"`;
   return [headers.join(","), ...rows.map((row) => headers.map((header) => quote(row[header])).join(","))].join("\n");
 }
