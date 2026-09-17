@@ -1,11 +1,7 @@
 "use client";
 
 import { ArrowRight, Check, Code2, ExternalLink, Gauge, Menu, Moon, ShieldCheck, Sun, X } from "lucide-react";
-<<<<<<< HEAD
-import { useEffect, useMemo, useRef, useState } from "react";
-=======
-import { useEffect, useState } from "react";
->>>>>>> origin/fix/ux-remaining
+import { useEffect, useRef, useState } from "react";
 import { BudgetWorkspace, PaymentWorkspace, SecurityWorkspace } from "./workspaces";
 
 type View = "overview" | "payments" | "security" | "budget" | "method";
