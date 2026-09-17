@@ -32,6 +32,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:unit
       - run: npm test
+      - run: npm run test:integration
       - uses: actions/upload-pages-artifact@v5
         with:
           path: pages-dist
