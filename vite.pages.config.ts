@@ -10,5 +10,15 @@ export default defineConfig({
   build: {
     outDir: resolve(process.cwd(), "pages-dist"),
     emptyOutDir: true,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id: string): string | undefined => {
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) return "react";
+          if (id.includes("node_modules/lucide-react")) return "icons";
+          return undefined;
+        },
+      },
+    },
   },
 });

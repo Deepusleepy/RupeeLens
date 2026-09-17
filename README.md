@@ -62,7 +62,8 @@ The local app runs at <http://localhost:5173/RupeeLens/>.
 
 ```bash
 npm run lint
-npx tsc --noEmit
+npm run typecheck
+npm run test:unit
 npm test
 ```
 

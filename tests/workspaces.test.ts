@@ -13,7 +13,7 @@ test("regenerate uses incremented seed (not stale closure)", () => {
 });
 
 test("cumulative growth guards empty selectedRows", () => {
-  assert.match(source, /selectedRows\.length \? \(\(selectedRows\.at\(-1\)!\.total \/ selectedRows\[0\]\.total - 1\) \* 100\)\.toFixed\(1\) : 0/);
+  assert.match(source, /selectedRows\.length \? \(\(selectedRows\.at\(-1\)!\.total \/ selectedRows\[0\]!\.total - 1\) \* 100\)\.toFixed\(1\) : 0/);
 });
 
 test("heatmap labels start with Thursday", () => {
@@ -52,7 +52,7 @@ test("Bars applies negative class", () => {
 });
 
 test("viewValue guards denominators", () => {
-  assert.match(source, /series\[0\]\?\.total \? row\.total \/ series\[0\]\.total \* 100 : 0/);
+  assert.match(source, /series\[0\]\?\.total \? row\.total \/ series\[0\]!\.total \* 100 : 0/);
   assert.match(source, /index && series\[index - 1\]\?\.total \?/);
   assert.match(source, /yearTotal \? row\.total \/ yearTotal \* 100 : 0/);
 });
