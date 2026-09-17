@@ -28,7 +28,7 @@ test("generateTransactions fraudPercent=100 → all fraud=true", () => {
   assert.ok(result.every((t) => t.fraud === true));
 });
 
-test("every transaction has valid score/rfScore/xgbScore in [0, 99]", () => {
+test("every transaction has valid score/logisticScore/forestScore in [0, 99]", () => {
   const result = generateTransactions(500, 10, 42);
   for (const t of result) {
     assert.ok(t.score >= 0 && t.score <= 99, `score ${t.score} out of range`);

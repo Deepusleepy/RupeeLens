@@ -32,7 +32,7 @@ test("fraud transaction (high amount, night, Foreign, new device, high attempts)
   assert.equal(result.risk, "HIGH");
 });
 
-test("rfScore and xgbScore differ for amount=30000 (RF threshold 25000, XGB threshold 50000)", () => {
+test("logisticScore and forestScore differ for amount=30000 (RF threshold 25000, XGB threshold 50000)", () => {
   const result = scoreTransaction({
     amount: 30000,
     hour: 13,
