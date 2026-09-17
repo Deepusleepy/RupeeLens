@@ -78,7 +78,9 @@ test("RocCanvas renders a canvas, not CSS-drawn ROC", () => {
 
 test("globals.css has transition rules for interactive elements", () => {
   assert.match(globalsSource, /transition: background-color \.15s ease, color \.15s ease, border-color \.15s ease/);
-  assert.match(globalsSource, /body \{[^}]*transition: background-color \.2s ease, color \.2s ease/);
+  assert.match(globalsSource, /body \{[^}]*transition: background-color \.25s ease, color \.25s ease/);
+  assert.match(globalsSource, /@keyframes page-in/);
+  assert.match(globalsSource, /animation: page-in/);
 });
 
 test("workspaces.css .dual-links removed", () => {
