@@ -71,8 +71,9 @@ test("globals.css dark theme --muted improved to #a0a0a0", () => {
   assert.match(globalsSource, /--muted: #a0a0a0/);
 });
 
-test("workspaces.css .roc-chart uses overflow: visible", () => {
-  assert.match(workspacesCssSource, /\.roc-chart \{[^}]*overflow: visible/);
+test("RocCanvas renders a canvas, not CSS-drawn ROC", () => {
+  assert.match(workspacesSource, /className="roc-canvas"/);
+  assert.doesNotMatch(workspacesCssSource, /\.roc-chart/);
 });
 
 test("globals.css has transition rules for interactive elements", () => {

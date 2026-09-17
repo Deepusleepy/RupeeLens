@@ -38,7 +38,7 @@ export function TrendChart({ data, secondary, formatter = (value) => value.toLoc
       };
       plot(d, green, false, true); if (s) plot(s, blue, true);
     };
-    drawRef.current = draw; draw(); const observer = new ResizeObserver(draw); observer.observe(element); return () => { observer.disconnect(); drawRef.current = null; };
+    drawRef.current = draw; draw(); const observer = new ResizeObserver(draw); observer.observe(element); const themeObserver = new MutationObserver(draw); themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }); return () => { observer.disconnect(); themeObserver.disconnect(); drawRef.current = null; };
   }, []);
   const last = data.at(-1);
   const points = data.length && last ? `${data[0]!.label}: ${formatter(data[0]!.value)} to ${last.label}: ${formatter(last.value)}` : "No data";
