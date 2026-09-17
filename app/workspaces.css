@@ -1,8 +1,8 @@
-.lab-page { max-width: 1320px; }
+.lab-page { max-width: 1244px; }
 .workspace-tabs { margin-bottom: 18px; display: flex; overflow-x: auto; border: 1px solid var(--ink); background: var(--surface); }
 .workspace-tabs button { min-height: 54px; padding: 0 20px; border: 0; border-right: 1px solid var(--line); border-bottom: 3px solid transparent; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; white-space: nowrap; }
 .workspace-tabs button:hover { background: var(--surface-muted); }
-.workspace-tabs button.active { border-bottom-color: var(--green); color: var(--green); font-weight: 700; }
+.workspace-tabs button.active { border-bottom-color: var(--green); color: var(--green); }
 .lab-toolbar { min-height: 70px; margin-bottom: 14px; padding: 13px; display: flex; align-items: end; gap: var(--space-md); border: 1px solid var(--ink); background: var(--surface); }
 .lab-toolbar label { color: var(--muted); font-size: 11px; }
 .lab-toolbar input:not([type="checkbox"]):not([type="range"]), .lab-toolbar select { min-width: 125px; height: 39px; margin-top: 7px; padding: 0 10px; display: block; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 11px; }
@@ -18,7 +18,7 @@
 .lab-toolbar .search-field input:not([type="checkbox"]):not([type="range"]) { min-width: 0; width: 100%; height: auto; margin: 0; padding: 0; border: 0; outline: 0; }
 .lab-toolbar .check-label { min-height: 39px; display: flex; align-items: center; gap: 8px; color: var(--text); }
 .check-label input { accent-color: var(--green); }
-.lab-kpis { margin-bottom: 14px; display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--ink); background: var(--ink); gap: 1px; }
+.lab-kpis { margin-bottom: 14px; display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--ink); background: var(--gap-ink); gap: 1px; }
 .lab-kpis article { min-height: 105px; padding: 18px; background: var(--surface); }
 .lab-kpis span, .lab-kpis strong, .lab-kpis small { display: block; }
 .lab-kpis span { color: var(--muted); font-size: 11px; }
@@ -80,8 +80,8 @@
 .form-card > .lab-primary { width: 100%; }
 .big-risk { min-height: 165px; margin-bottom: 18px; display: grid; place-content: center; justify-items: center; border: 1px solid var(--green); background: var(--green-soft); }
 .big-risk strong { font: 600 52px/1 var(--font-mono), monospace; }
-.big-risk span { margin-top: 12px; color: var(--green); font-size: 11px; }
-.big-risk.high { border-color: var(--rust); background: var(--risk-high-bg); }.big-risk.high span { color: var(--rust); }
+.big-risk span { margin-top: 12px; color: var(--heat-up-text); font-size: 11px; }
+.big-risk.high { border-color: var(--rust); background: var(--risk-high-bg); }.big-risk.high span { color: var(--rust-text, var(--rust)); }
 .big-risk.medium { border-color: var(--gold); background: var(--risk-medium-bg); }.big-risk.medium span { color: var(--risk-medium-text); }
 .explanation-list { list-style: none; margin: 15px 0 0; padding: 0; }
 .explanation-list li { padding: 10px 0; border-top: 1px solid var(--line); color: var(--text); font-size: 11px; }
@@ -103,8 +103,8 @@
 .compact-table th { padding: 11px; border-bottom: 1px solid var(--ink); color: var(--muted); font-size: 11px; text-align: left; white-space: nowrap; }
 .compact-table td { padding: 10px 11px; border-bottom: 1px solid var(--line); color: var(--text); font-size: 11px; white-space: nowrap; }
 .compact-table tbody tr:hover { background: var(--green-soft); }
-.risk-tag { padding: 4px 6px; border: 1px solid var(--risk-low-border); color: var(--green); background: var(--risk-low-bg); font-size: 11px; text-transform: uppercase; }
-.risk-tag.high, .risk-tag.critical { border-color: var(--risk-high-border); color: var(--rust); background: var(--risk-high-bg); }
+.risk-tag { padding: 4px 6px; border: 1px solid var(--risk-low-border); color: var(--risk-low-text, var(--green)); background: var(--risk-low-bg); font-size: 11px; text-transform: uppercase; }
+.risk-tag.high, .risk-tag.critical { border-color: var(--risk-high-border); color: var(--rust-text, var(--rust)); background: var(--risk-high-bg); }
 .risk-tag.medium, .risk-tag.warning { border-color: var(--risk-medium-border); color: var(--risk-medium-text); background: var(--risk-medium-bg); }
 .upload-zone { min-height: 260px; display: grid; place-content: center; justify-items: center; text-align: center; }
 .upload-zone > svg { color: var(--green); }.upload-zone h2 { margin: 18px 0 10px; }
