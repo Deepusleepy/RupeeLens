@@ -230,8 +230,8 @@ test("workspaces.tsx rupeeFlow buttons have active state and aria-pressed", () =
 });
 
 test("workspaces.tsx uploadBudget sets startYear and endYear after upload", () => {
-  assert.match(workspacesSource, /setStartYear\(years\[0\]/);
-  assert.match(workspacesSource, /setEndYear\(years\[years\.length - 1\]/);
+  assert.match(workspacesSource, /setStartYear\(uploadedYears\[0\]/);
+  assert.match(workspacesSource, /setEndYear\(uploadedYears\[uploadedYears\.length - 1\]/);
 });
 
 test("workspaces.tsx YoY growth guards against division by zero", () => {
