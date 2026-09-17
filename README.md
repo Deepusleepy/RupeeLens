@@ -9,10 +9,10 @@ RupeeLens is a TypeScript dashboard for studying UPI transaction risk, security 
 ### Transaction analysis
 
 - Generates synthetic UPI transactions with adjustable fraud rates
-- Scores individual transactions with two transparent rule-based model styles
+- Scores individual transactions with two real in-browser models: a logistic regression and a decision forest, trained on the generated dataset
 - Filters and exports transaction data
 - Handles batch CSV scoring
-- Shows model metrics, feature importance, a confusion matrix, and an ROC view
+- Shows live validation metrics, feature importance, a confusion matrix, and a real ROC curve computed from a held-out test split
 
 ### Security log analysis
 
@@ -33,17 +33,26 @@ RupeeLens is a TypeScript dashboard for studying UPI transaction risk, security 
 
 The transaction and security records included with the project are synthetic. Uploaded files are processed in the browser and are not stored by the app.
 
-The risk scores are deterministic examples for exploration. They are not trained banking models and should not be used to approve or block real payments.
+The transaction models are trained live in your browser on the synthetic dataset. They demonstrate the full modeling pipeline (feature encoding, training, held-out validation) but learn from synthetic patterns only, and should not be used to approve or block real payments.
 
 Budget figures are estimates, not actual expenditure. The 2026-27 figures link back to the Government of India, Ministry of Finance source document: [Budget at a Glance](https://www.indiabudget.gov.in/doc/budget_at_glance/bag1.pdf).
 
 ## Tech stack
 
-- React
-- TypeScript
+- React 19
+- TypeScript (strict)
 - Vite
 - Tailwind CSS
 - Plain CSS and Canvas charts
+- In-browser machine learning (no server, no data leaves the page)
+
+## Features
+
+- Light and dark themes (dark is true black), persisted across visits
+- Keyboard-navigable tabs, skip link, ARIA-correct tables and dialogs
+- Toggle switches and chip selectors, page transitions, reduced-motion support
+- Table pagination and row-count indicators for large datasets
+- CSV uploads with header validation and inline error messages
 
 ## Run locally
 
