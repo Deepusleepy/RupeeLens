@@ -8,8 +8,8 @@ const defenceSeries = budgetHistory.filter((p) => p.ministry === "Defence").map(
 
 test("Finance series has no >100x jumps between consecutive years", () => {
   for (let i = 1; i < financeSeries.length; i++) {
-    const ratio = Math.max(financeSeries[i], financeSeries[i - 1]) / Math.min(financeSeries[i], financeSeries[i - 1]);
-    assert.ok(ratio <= 100, `Finance jump at year ${2014 + i}: ${financeSeries[i - 1]} -> ${financeSeries[i]} (ratio ${ratio.toFixed(2)})`);
+    const ratio = Math.max(financeSeries[i]!, financeSeries[i - 1]!) / Math.min(financeSeries[i]!, financeSeries[i - 1]!);
+    assert.ok(ratio <= 100, `Finance jump at year ${2014 + i}: ${financeSeries[i - 1]!} -> ${financeSeries[i]!} (ratio ${ratio.toFixed(2)})`);
   }
 });
 

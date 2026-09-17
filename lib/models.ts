@@ -45,10 +45,10 @@ export function splitTrainTest<T>(items: T[], seed = 42): { train: T[]; test: T[
   const indices = items.map((_, i) => i);
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
-    [indices[i], indices[j]] = [indices[j], indices[i]];
+    [indices[i], indices[j]] = [indices[j]!, indices[i]!];
   }
   const split = Math.floor(indices.length * 0.8);
-  return { train: indices.slice(0, split).map((i) => items[i]), test: indices.slice(split).map((i) => items[i]) };
+  return { train: indices.slice(0, split).map((i) => items[i]!), test: indices.slice(split).map((i) => items[i]!) };
 }
 
 function sigmoid(z: number): number {
@@ -61,7 +61,8 @@ export type LogisticModel = { w: Float64Array; b: number; predict: (features: Fl
 
 export function trainLogistic(features: Float64Array[], labels: number[], lr = 0.1, epochs = 400, l2 = 0.001): LogisticModel {
   const n = features.length;
-  const d = features[0].length;
+  const d = features[0]?.length ?? 0;
+  if (!n || !d) return { w: new Float64Array(0), b: 0, predict: () => 0.5, lossHistory: [] };
   const w = new Float64Array(d);
   let b = 0;
   const lossHistory: number[] = [];
@@ -71,18 +72,18 @@ export function trainLogistic(features: Float64Array[], labels: number[], lr = 0
     let gradB = 0;
     let loss = 0;
     for (let i = 0; i < n; i++) {
-      const x = features[i];
+      const x = features[i]!;
       let z = b;
-      for (let j = 0; j < d; j++) z += w[j] * x[j];
+      for (let j = 0; j < d; j++) z += w[j]! * x[j]!;
       const p = sigmoid(z);
-      const err = p - labels[i];
-      for (let j = 0; j < d; j++) gradW[j] += err * x[j];
+      const err = p - labels[i]!;
+      for (let j = 0; j < d; j++) gradW[j]! += err * x[j]!;
       gradB += err;
       loss += labels[i] === 1 ? -Math.log(p + 1e-12) : -Math.log(1 - p + 1e-12);
     }
     for (let j = 0; j < d; j++) {
-      gradW[j] = (gradW[j] + l2 * w[j]) / n;
-      w[j] -= lr * gradW[j];
+      gradW[j] = (gradW[j]! + l2 * w[j]!) / n;
+      w[j] = w[j]! - lr * gradW[j]!;
     }
     b -= lr * (gradB / n);
     loss = loss / n + 0.5 * l2 * w.reduce((s, v) => s + v * v, 0);
@@ -90,7 +91,7 @@ export function trainLogistic(features: Float64Array[], labels: number[], lr = 0
     if (epoch > 10 && Math.abs(prevLoss - loss) < 1e-6) break;
     prevLoss = loss;
   }
-  return { w, b, predict: (x: Float64Array) => { let z = b; for (let j = 0; j < d; j++) z += w[j] * x[j]; return sigmoid(z); }, lossHistory };
+  return { w, b, predict: (x: Float64Array) => { let z = b; for (let j = 0; j < d; j++) z += w[j]! * x[j]!; return sigmoid(z); }, lossHistory };
 }
 
 type TreeNode = { leaf: boolean; prediction?: number; feature?: number; threshold?: number; left?: TreeNode; right?: TreeNode };
@@ -108,7 +109,8 @@ function quantiles(values: number[], count: number): number[] {
   const out: number[] = [];
   for (let i = 1; i <= count; i++) {
     const idx = Math.floor((i / (count + 1)) * (sorted.length - 1));
-    out.push(sorted[idx]);
+    const value = sorted[idx];
+    if (value !== undefined) out.push(value);
   }
   return [...new Set(out)];
 }
@@ -117,7 +119,7 @@ function buildTree(features: Float64Array[], labels: number[], depth: number, ma
   const pos = labels.filter((l) => l === 1).length;
   const prediction = pos / labels.length;
   if (depth >= maxDepth || labels.length < 4 || pos === 0 || pos === labels.length) return { leaf: true, prediction };
-  const allFeatures = features[0].length;
+  const allFeatures = features[0]!.length;
   const candidates: number[] = [];
   const used = new Set<number>();
   while (candidates.length < Math.min(featureCount, allFeatures) && candidates.length < allFeatures) {
@@ -130,17 +132,17 @@ function buildTree(features: Float64Array[], labels: number[], depth: number, ma
   let bestLeft: number[] = [];
   let bestRight: number[] = [];
   for (const f of candidates) {
-    const values = features.map((x) => x[f]);
+    const values = features.map((x) => x[f]!);
     const thresholds = quantiles(values, thresholdCount);
     for (const thr of thresholds) {
       const left: number[] = [];
       const right: number[] = [];
       for (let i = 0; i < features.length; i++) {
-        if (features[i][f] <= thr) left.push(i); else right.push(i);
+        if (features[i]![f]! <= thr) left.push(i); else right.push(i);
       }
       if (!left.length || !right.length) continue;
-      const leftLabels = left.map((i) => labels[i]);
-      const rightLabels = right.map((i) => labels[i]);
+      const leftLabels = left.map((i) => labels[i]!);
+      const rightLabels = right.map((i) => labels[i]!);
       const weighted = (left.length * gini(leftLabels) + right.length * gini(rightLabels)) / labels.length;
       if (weighted < bestGini) {
         bestGini = weighted;
@@ -154,15 +156,15 @@ function buildTree(features: Float64Array[], labels: number[], depth: number, ma
   if (bestFeature === -1) return { leaf: true, prediction };
   const parentGini = gini(labels);
   const decrease = parentGini - bestGini;
-  importance[bestFeature] += decrease * labels.length;
-  const leftTree = buildTree(bestLeft.map((i) => features[i]), bestLeft.map((i) => labels[i]), depth + 1, maxDepth, featureCount, thresholdCount, random, importance);
-  const rightTree = buildTree(bestRight.map((i) => features[i]), bestRight.map((i) => labels[i]), depth + 1, maxDepth, featureCount, thresholdCount, random, importance);
+  importance[bestFeature]! += decrease * labels.length;
+  const leftTree = buildTree(bestLeft.map((i) => features[i]!), bestLeft.map((i) => labels[i]!), depth + 1, maxDepth, featureCount, thresholdCount, random, importance);
+  const rightTree = buildTree(bestRight.map((i) => features[i]!), bestRight.map((i) => labels[i]!), depth + 1, maxDepth, featureCount, thresholdCount, random, importance);
   return { leaf: false, feature: bestFeature, threshold: bestThreshold, left: leftTree, right: rightTree };
 }
 
 function predictTree(node: TreeNode, x: Float64Array): number {
   if (node.leaf) return node.prediction ?? 0;
-  if (x[node.feature!] <= node.threshold!) return predictTree(node.left!, x);
+  if (x[node.feature!]! <= node.threshold!) return predictTree(node.left!, x);
   return predictTree(node.right!, x);
 }
 
@@ -172,14 +174,14 @@ export function trainForest(features: Float64Array[], labels: number[], seed = 4
   const random = seeded(seed);
   const n = features.length;
   const treeList: TreeNode[] = [];
-  const importance = new Float64Array(features[0].length);
+  const importance = new Float64Array(features[0]?.length ?? 0);
   for (let t = 0; t < trees; t++) {
     const sampleFeatures: Float64Array[] = [];
     const sampleLabels: number[] = [];
     for (let i = 0; i < n; i++) {
       const idx = Math.floor(random() * n);
-      sampleFeatures.push(features[idx]);
-      sampleLabels.push(labels[idx]);
+      sampleFeatures.push(features[idx]!);
+      sampleLabels.push(labels[idx]!);
     }
     treeList.push(buildTree(sampleFeatures, sampleLabels, 0, maxDepth, featureCount, thresholdCount, random, importance));
   }
@@ -194,7 +196,7 @@ export type Metrics = {
 export function computeMetrics(probabilities: number[], labels: number[], threshold = 0.5): Metrics {
   let tp = 0, fp = 0, fn = 0, tn = 0;
   for (let i = 0; i < labels.length; i++) {
-    const pred = probabilities[i] >= threshold ? 1 : 0;
+    const pred = probabilities[i]! >= threshold ? 1 : 0;
     if (pred === 1 && labels[i] === 1) tp++;
     else if (pred === 1 && labels[i] === 0) fp++;
     else if (pred === 0 && labels[i] === 1) fn++;
@@ -215,7 +217,7 @@ export function computeMetrics(probabilities: number[], labels: number[], thresh
   }
   let auc = 0;
   for (let i = 1; i < rocPoints.length; i++) {
-    auc += (rocPoints[i].fpr - rocPoints[i - 1].fpr) * (rocPoints[i].tpr + rocPoints[i - 1].tpr) / 2;
+    auc += (rocPoints[i]!.fpr - rocPoints[i - 1]!.fpr) * (rocPoints[i]!.tpr + rocPoints[i - 1]!.tpr) / 2;
   }
   return { accuracy, precision, recall, f1, auc, matrix: [[tn, fp], [fn, tp]], rocPoints };
 }
@@ -223,7 +225,7 @@ export function computeMetrics(probabilities: number[], labels: number[], thresh
 export function aggregateImportance(raw: Float64Array): { label: string; value: number }[] {
   const grouped = FEATURE_GROUPS.map((g) => {
     let sum = 0;
-    for (let i = g.start; i < g.end; i++) sum += raw[i];
+    for (let i = g.start; i < g.end; i++) sum += raw[i]!;
     return { label: g.label, value: sum };
   });
   const total = grouped.reduce((s, g) => s + g.value, 0) || 1;
