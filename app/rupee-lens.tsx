@@ -1,7 +1,11 @@
 "use client";
 
 import { ArrowRight, Check, Code2, ExternalLink, Gauge, Menu, Moon, ShieldCheck, Sun, X } from "lucide-react";
+<<<<<<< HEAD
 import { useEffect, useMemo, useRef, useState } from "react";
+=======
+import { useEffect, useState } from "react";
+>>>>>>> origin/fix/ux-remaining
 import { BudgetWorkspace, PaymentWorkspace, SecurityWorkspace } from "./workspaces";
 
 type View = "overview" | "payments" | "security" | "budget" | "method";
@@ -53,6 +57,5 @@ function Method() {
 
 export function RupeeLens() {
   const [active, setActive] = useState<View>("overview");
-  const content = useMemo(() => active === "payments" ? <PaymentWorkspace /> : active === "security" ? <SecurityWorkspace /> : active === "budget" ? <BudgetWorkspace /> : active === "method" ? <Method /> : <Overview navigate={setActive} />, [active]);
-  return <Shell active={active} setActive={setActive}>{content}</Shell>;
+  return <Shell active={active} setActive={setActive}>{active === "overview" && <Overview navigate={setActive} />}<div style={{ display: active === "payments" ? "block" : "none" }}><PaymentWorkspace /></div><div style={{ display: active === "security" ? "block" : "none" }}><SecurityWorkspace /></div><div style={{ display: active === "budget" ? "block" : "none" }}><BudgetWorkspace /></div>{active === "method" && <Method />}</Shell>;
 }
